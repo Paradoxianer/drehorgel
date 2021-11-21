@@ -27,10 +27,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _incrementCounter() {
-    setState(() {
+  double angle = 0.0;
 
-    });
+  void _onPanUpdateHandler(DragUpdateDetails details) {
+    final touchPositionFromCenter = details.localPosition;
+    setState(
+          () {
+        angle = touchPositionFromCenter.direction;
+      },
+    );
   }
 
   @override
@@ -48,8 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Stack(
           children: <Widget>[
             Image.asset('assets/images/drehorgel.png'),
@@ -58,12 +61,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child:Transform.scale(
                 origin: Offset(410,267),
                 scale: 0.5,
-                child: Transform.rotate(
-                    angle: 2.5,
-                    child: Image.asset('assets/images/kurbel.png')
+                  child: GestureDetector(
+                      onPanUpdate: _onPanUpdateHandler,
+                      child: Transform.rotate(
+                      angle: angle,
+                      child: Image.asset('assets/images/kurbel.png')
+                    )
+                  )
               )
             )
-          )
           ],
         ),
       ),
