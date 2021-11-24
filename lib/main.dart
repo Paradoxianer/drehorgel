@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -28,6 +30,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double angle = 0.0;
+  AudioCache audioCache = AudioCache();
+
+  void initState() {
+    super.initState();
+      audioCache.play('assets/audios/We_wish_you');
+  }
 
   void _onPanUpdateHandler(DragUpdateDetails details) {
     final touchPositionFromCenter = details.localPosition;
@@ -57,19 +65,16 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Image.asset('assets/images/drehorgel.png'),
             Transform.translate(
-                offset: Offset(-20,-320),
-              child:Transform.scale(
-                origin: Offset(410,267),
-                scale: 0.5,
-                  child: GestureDetector(
-                      onPanUpdate: _onPanUpdateHandler,
-                      child: Transform.rotate(
-                      angle: angle,
+                offset: Offset(450,00),
+            child: GestureDetector(
+                onPanUpdate: _onPanUpdateHandler,
+                child: Transform(
+                  transform: new Matrix4.rotationZ(angle)..scale(0.5),
+                      alignment: FractionalOffset(0.15,0.5),
                       child: Image.asset('assets/images/kurbel.png')
                     )
                   )
-              )
-            )
+          )
           ],
         ),
       ),
