@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
+
 
 
 void main() {
@@ -29,19 +31,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  double oldAngle = 0.0;
   double angle = 0.0;
-  AudioCache audioCache = AudioCache();
+  AudioPlayer player = AudioPlayer();
 
   void initState() {
     super.initState();
-      audioCache.play('assets/audios/We_wish_you');
+    player.setAsset('audios/We_wish_you.mp3');
+    player.setLoopMode(LoopMode.one);
   }
 
   void _onPanUpdateHandler(DragUpdateDetails details) {
     final touchPositionFromCenter = details.localPosition;
     setState(
           () {
+        if (!player.playing)
+          player.play();
+        else
+          player.setSpeed(angle);
         angle = touchPositionFromCenter.direction;
+        oldAngle=angle;
       },
     );
   }
@@ -64,8 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Stack(
           children: <Widget>[
             Image.asset('assets/images/drehorgel.png'),
-            Transform.translate(
-                offset: Offset(450,00),
+            FractionalTranslation(
+                translation: Offset(0.5,0.0),
             child: GestureDetector(
                 onPanUpdate: _onPanUpdateHandler,
                 child: Transform(
