@@ -53,7 +53,7 @@ class TheCrank extends StatefulWidget {
 }
 
 class _CrankState extends State<TheCrank> {
-  double fullAngle;
+  double fullAngle = 0.0;
   int nullCounter = 0;
   double oldAngle = 0.0;
   double angle = 0.0;
@@ -117,5 +117,55 @@ class _CrankState extends State<TheCrank> {
             transform: new Matrix4.rotationZ(angle)..scale(0.5),
             alignment: FractionalOffset(0.15, 0.5),
             child: Image.asset('assets/images/kurbel.png')));
+  }
+}
+
+class FlyingMoney extends StatefulWidget {
+  @override
+  State<FlyingMoney> createState() => FlyingMoneyState();
+}
+
+class FlyingMoneyState extends State<FlyingMoney> with SingleTickerProviderStateMixin {
+  late AnimationController control;
+  late Animation<double> rot;
+  late Animation<double> trasl;
+
+  @override
+  void initState() {
+    super.initState();
+
+    control = AnimationController(
+      duration: Duration(seconds: 5),
+      vsync: this,
+    );
+
+    rot = Tween<double>(
+      begin: 0,
+      end: 2 * pi,
+    ).animate(control);
+
+    trasl = Tween<double>(
+      begin: 0,
+      end: 300,
+    ).animate(control);
+
+    control.repeat();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: control,
+        builder: (_, child) => Stack(children: <Widget>[
+          Positioned(
+            top: 100,
+            left: trasl.value,
+            child: Transform(
+                transform: Matrix4.rotationZ(rot.value),
+                alignment: Alignment.center,
+                child: Image.asset('assets/images/Money.png')
+            ),
+          ),
+        ]));
   }
 }
