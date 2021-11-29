@@ -1,3 +1,8 @@
+import 'dart:math';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+
 class TheCrank extends StatefulWidget {
   TheCrank({Key? key}) : super(key: key);
 
@@ -64,13 +69,6 @@ class _CrankState extends State<TheCrank> {
   }
 
   Widget build(BuildContext context) {
-    return
-      GestureDetector(
-        onPanUpdate: _onPanUpdateHandler,
-        onPanEnd: _onPanEndHandler,
-        child: Transform(
-            transform: new Matrix4.rotationZ(angle)..scale(0.5),
-            alignment: FractionalOffset(0.15, 0.5),
-            child: Image.asset('assets/images/kurbel.png')));
+    return GestureDetector(onPanUpdate: _onPanUpdateHandler, onPanEnd: _onPanEndHandler, child: Transform(transform: new Matrix4.rotationZ(angle)..scale(0.5), alignment: FractionalOffset(0.15, 0.5), child: Image.asset('assets/images/kurbel.png')));
   }
 }
