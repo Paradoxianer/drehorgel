@@ -45,12 +45,12 @@ class MyHomePage extends StatelessWidget {
               body: Center(
                 child: Stack(
                   children: <Widget>[
-                    Image.asset('assets/images/drehorgel.png'),
-                    /*FractionalTranslation(
-                      // TODO: Fix the position of the Crank according to the size of the Pipe Organ
-                        translation: Offset(0.5, 0.0),
-                        child: TheCrank())*/
-                    TheCrank()
+                    Image.asset('assets/images/drehorgel.png',fit: BoxFit.none,),
+                    Positioned(
+                        top: -100,
+                        left: 300,
+                        child: TheCrank()
+                    )
                   ],
                 ),
               ),
