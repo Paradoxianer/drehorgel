@@ -28,8 +28,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
+        // TODO: add the Money Counter
         title: Text(title),
       ),
       body: Center(
@@ -37,11 +36,21 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             Image.asset('assets/images/drehorgel.png'),
             FractionalTranslation(
+                // TODO: Fix the position of the Crank according to the size of the Pipe Organ
                 translation: Offset(0.5, 0.0), child: TheCrank())
           ],
         ),
       ),
-    );
+      floatingActionButton: FloatingActionButton.extended(
+        tooltip: 'Increment Counter',
+        onPressed: () => {
+          https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html?formular-korps-lokal/spende
+          //do something
+        },
+        icon: Icon(Icons.add_shopping_cart_rounded),
+        label: Text("Spenden: " + 7.77.toString()+"€")
+        )
+      );
   }
 }
 
@@ -53,6 +62,7 @@ class TheCrank extends StatefulWidget {
 }
 
 class _CrankState extends State<TheCrank> {
+  // TODO: add a random amout of money to your donation pot (maybe have a "all time collection" and a "now collection"
   double fullAngle = 0.0;
   int nullCounter = 0;
   double oldAngle = 0.0;
@@ -110,7 +120,8 @@ class _CrankState extends State<TheCrank> {
   }
 
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return
+      GestureDetector(
         onPanUpdate: _onPanUpdateHandler,
         onPanEnd: _onPanEndHandler,
         child: Transform(
@@ -169,3 +180,4 @@ class FlyingMoneyState extends State<FlyingMoney> with SingleTickerProviderState
         ]));
   }
 }
+
