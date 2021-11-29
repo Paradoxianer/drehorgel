@@ -1,8 +1,10 @@
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import './the_crank.dart';
+import './donation_button.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,11 +26,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatelessWidget {
   final String title;
-  final String _url = 'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html?formular-korps-lokal/spende';
   MyHomePage({Key? key, required this.title}) : super(key: key);
-  void _launchURL() async {
-    if (!await launch(_url)) throw 'Could not launch $_url';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +46,44 @@ class MyHomePage extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton.extended(tooltip: 'Increment Counter', onPressed: _launchURL, icon: Icon(Icons.add_shopping_cart_rounded), label: Text("Spenden: " + 7.77.toString() + "€")));
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                FloatingActionButton(
+                  onPressed: shareScreenshot(),
+                  icon: Icon(Icons.share)
+                ),
+                DonationButton()
+              ]
+          )
+        )
+
+        );
+  }
+  
+
+
+   takeScreenShot() async{
+    RenderRepaintBoundary boundary = previewContainer.currentContext.findRenderObject();
+    ui.Image image = await boundary.toImage();
+    final directory = (await getApplicationDocumentsDirectory()).path;
+    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List pngBytes = byteData.buffer.asUint8List();
+    print(pngBytes);
+    File imgFile =new File('$directory/screenshot.png');
+        imgFile.writeAsBytes(pngBytes);
+  }
+
+  Future shareScreenshot() async {
+    try {
+      await takeScreenShot();
+      debugPrint("now we can share the screenshot");
+      /*await EsysFlutterShare.shareImage(
+          'Game.png', bytes, 'Save The World');
+    } catch (e) {
+      print('error: $e');
+    }*/
   }
 }
