@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -21,9 +23,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MyHomePage extends StatelessWidget {
   final String title;
+  final String _url = 'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html?formular-korps-lokal/spende';
   MyHomePage({Key? key, required this.title}) : super(key: key);
+  void _launchURL() async {
+    if (!await launch(_url)) throw 'Could not launch $_url';
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,10 +50,7 @@ class MyHomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         tooltip: 'Increment Counter',
-        onPressed: () => {
-          https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html?formular-korps-lokal/spende
-          //do something
-        },
+        onPressed:_launchURL,
         icon: Icon(Icons.add_shopping_cart_rounded),
         label: Text("Spenden: " + 7.77.toString()+"€")
         )
