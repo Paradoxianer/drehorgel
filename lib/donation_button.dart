@@ -10,7 +10,7 @@ class DonationButton extends StatefulWidget {
 
 class DonationButtonState extends State<DonationButton> with SingleTickerProviderStateMixin {
   double money = 0.0;
-  final String _url = 'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html?formular-korps-lokal/spende';
+  final String _url = 'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html#custom1=273&betrag=';
 
   @override
   void initState() {
@@ -18,12 +18,24 @@ class DonationButtonState extends State<DonationButton> with SingleTickerProvide
   }
 
   _launchURL() async {
-    if (!await launch(_url)) throw 'Could not launch $_url';
+    String donateUrl = "";
+    if (money >0.25){
+      donateUrl = _url + money.toStringAsFixed(2).replaceAll(".", ",");
+    }
+    else
+    {
+      donateUrl = _url + 5.00.toString();
+    }
+    if (!await launch(donateUrl)) throw 'Could not launch $_url';
   }
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton.extended(tooltip: 'Money collected', onPressed: _launchURL, icon: Icon(Icons.add_shopping_cart_rounded), label: Text("Spenden: " + money.toString() + "€"));
+    return FloatingActionButton.extended(
+        tooltip: 'Money collected',
+        onPressed: _launchURL,
+        icon: Icon(Icons.add_shopping_cart_rounded),
+        label: Text("Spenden: " + money.toString() + "€"));
   }
 
   newMoney() {
