@@ -9,10 +9,12 @@ class DonationButton extends StatefulWidget {
   DonationButtonState createState() => DonationButtonState();
 }
 
-class DonationButtonState extends State<DonationButton> with SingleTickerProviderStateMixin {
+class DonationButtonState extends State<DonationButton>
+    with SingleTickerProviderStateMixin {
   double money = 0.0;
   int oldRot = 0;
-  final String _url = 'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html#custom1=273&betrag=';
+  final String _url =
+      'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html#custom1=273&betrag=';
 
   @override
   void initState() {
@@ -21,11 +23,9 @@ class DonationButtonState extends State<DonationButton> with SingleTickerProvide
 
   _launchURL() async {
     String donateUrl = "";
-    if (money >0.25){
+    if (money > 0.25) {
       donateUrl = _url + money.toStringAsFixed(2).replaceAll(".", ",");
-    }
-    else
-    {
+    } else {
       donateUrl = _url + 5.00.toString();
     }
     if (!await launch(donateUrl)) throw 'Could not launch $_url';
@@ -34,76 +34,39 @@ class DonationButtonState extends State<DonationButton> with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
     newMoney();
-    return
-            FloatingActionButton.extended(
-                tooltip: 'Money collected',
-                onPressed: _launchURL,
-                icon: Icon(Icons.add_shopping_cart_rounded),
-                label: Text("Spenden: " + money.toString() + "€"));
+    return FloatingActionButton.extended(
+        tooltip: 'Money collected',
+        onPressed: _launchURL,
+        icon: Icon(Icons.add_shopping_cart_rounded),
+        label: Text("Spenden: " + money.toString() + "€"));
+  }
+
+  double dp(double val, int places) {
+    num mod = pow(10.0, places);
+    return ((val * mod).round().toDouble() / mod);
   }
 
   newMoney() {
-    print("I am in New MONEY!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     var rng = new Random();
     setState(() {
-      int hunderter = rng.nextInt(100000);
-      int fuenfziger = rng.nextInt(500);
-      int zwanziger = rng.nextInt(100);
-      int zehner = rng.nextInt(100);
-      int fuenfer = rng.nextInt(1);
-      int euros = rng.nextInt(5);
-      int cents = rng.nextInt(100);
-      money = money + euros + cents / 100;
+      if (rng.nextInt(1000000001) / 1000000000 == 1)
+        money += 100;
+      else if (rng.nextInt(100000001) / 100000000 == 1)
+        money += 50;
+      else if (rng.nextInt(500001) / 500000 == 1)
+        money += 20;
+      else if (rng.nextInt(5001) / 5000 == 1)
+        money += 10;
+      else if (rng.nextInt(1001) / 1000 == 1)
+        money += 5;
+      else {
+        int euros = (rng.nextInt(1001) / 1000).toInt();
+        if (euros > 0)
+          money += euros;
+        else
+          money += dp(rng.nextInt(1000) / 100, 2);
+      }
+      money = dp(money, 2);
     });
   }
 }
-
-
-/*class DonationButton extends StatelessWidget{
-  final ValueNotifier<int> fullRotation;
-  DonationButton({Key? key,required this.fullRotation}) : super(key: key);
-  double money = 0.0;
-  int oldRot = 0;
-  final String _url = 'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html#custom1=273&betrag=';
-
-  _launchURL() async {
-    String donateUrl = "";
-    if (money >0.25){
-      donateUrl = _url + money.toStringAsFixed(2).replaceAll(".", ",");
-    }
-    else
-    {
-      donateUrl = _url + 5.00.toString();
-    }
-    if (!await launch(donateUrl)) throw 'Could not launch $_url';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    newMoney();
-    return
-      ValueListenableBuilder<int>(
-          builder: (BuildContext context, int value, Widget? child) {
-            return FloatingActionButton.extended(
-                tooltip: 'Money collected',
-                onPressed: _launchURL,
-                icon: Icon(Icons.add_shopping_cart_rounded),
-                label: Text("Spenden: " + money.toString() + " € - $value"));
-          },
-          valueListenable: fullRotation
-      );
-  }
-
-  newMoney() {
-    print("I am in New MONEY!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    var rng = new Random();
-    int hunderter = rng.nextInt(100000);
-    int fuenfziger = rng.nextInt(500);
-    int zwanziger = rng.nextInt(100);
-    int zehner = rng.nextInt(100);
-    int fuenfer = rng.nextInt(1);
-    int euros = rng.nextInt(5);
-    int cents = rng.nextInt(100);
-    money = money + euros + cents / 100;
-  }
-}*/
