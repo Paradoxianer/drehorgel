@@ -57,10 +57,19 @@ class _CrankState extends State<TheCrank> {
     final touchPositionFromCenter =
         details.localPosition - centerOfGestureDetector;
     double dSpeed = 0.0;
+    double dAngle = 0.0;
     time = details.sourceTimeStamp!.inMilliseconds;
-    angle = touchPositionFromCenter.direction;
-    fullAngle += oldAngle-angle;
-    dSpeed = dp(((oldAngle - angle) / (oldTime - time))*5, 3)-0.02;
+//    The angle of this offset as radians clockwise from the positive x-axis, in the range -pi to pi, assuming positive values of the x-axis go to the right and positive values of the y-axis go down. [...]
+    angle = pi + touchPositionFromCenter.direction;
+    dAngle =(angle - oldAngle);
+    if (dAngle>pi) {
+      dAngle = (angle-2*pi)-oldAngle;
+    }
+    else if (dAngle< -pi) {
+      dAngle= angle-(oldAngle-2*pi);
+    }
+    fullAngle += dAngle;
+    dSpeed = dp(((angle-oldAngle) / (time-oldTime))*5, 3)-0.02;
     //  print("deltaSpeed " + dSpeed.toString());
     speed = speed + dSpeed;
     //   print("resultingSpeed " + speed.toString());
@@ -73,20 +82,20 @@ class _CrankState extends State<TheCrank> {
       if (speed > 0.1) {
         nullCounter = 0;
         player.setSpeed(speed);
-        oldAngle = angle;
-        oldTime = time;
       }
       else {
         nullCounter++;
         if (nullCounter > 10) player.pause();
       }
     }
-    if (fullAngle>2*pi){
-      print("Calling onFullRotation");
+    if ((fullAngle>2*pi) || (fullAngle<(-2*pi))){
       fullAngle=0;
        if (donationButtonKey.currentState != null)
           donationButtonKey.currentState?.setState(() {});
     }
+    oldAngle = angle;
+    oldTime = time;
+    angle -= pi;
     setState(
       () {
       },
