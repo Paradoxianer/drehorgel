@@ -4,15 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import './the_crank.dart';
-import './donation_button.dart';
+import 'package:orgel/the_crank.dart';
+import 'package:orgel/donation_button.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -29,57 +28,69 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   final String title;
   GlobalKey previewContainer = new GlobalKey();
+  GlobalKey dBKey  = new GlobalKey();
+  //final ValueNotifier<int> _counter = ValueNotifier<int>(0);
 
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return
-      RepaintBoundary(
-          key: previewContainer,
-          child: Scaffold(
-              appBar: AppBar(
-                // TODO: add the Money Counter
-                title: Text(title),
-              ),
-              body: Center(
-                child: Stack(
-                  children: <Widget>[
-                    Image.asset('assets/images/drehorgel.png',fit: BoxFit.none,),
-                    Positioned(
-                        top: -100,
-                        left: 300,
-                        child: TheCrank()
-                    )
-                  ],
+    return RepaintBoundary(
+        key: previewContainer,
+        child: Scaffold(
+            appBar: AppBar(
+              // TODO: add the Money Counter
+              title: Text(title),
+            ),
+            body: Container(
+                decoration: BoxDecoration(
+                  image:  DecorationImage(
+                    image: AssetImage("assets/images/background.png"),
+                    fit: BoxFit.cover
+                  )
                 ),
-              ),
-              bottomNavigationBar: BottomAppBar(
-                elevation: 0.0,
-                  child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        /*FloatingActionButton(
+                child: Center(
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      Image.asset(
+                        'assets/images/drehorgel.png'
+                      ),
+                      Positioned(top: -100, left: 300,
+                          child: TheCrank(donationButtonKey: dBKey,),
+                      )
+                    ],
+                  ),
+                )
+            ),
+            bottomNavigationBar: BottomAppBar(
+                    elevation: 0.0,
+                    child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          /*FloatingActionButton(
                             onPressed: () {
                               shareScreenshot();
                             },
                             child: Icon(Icons.share)
                         ),*/
-                        DonationButton()
-                      ]
-                  )
-              )
-          )
-      );
+                          DonationButton(key: dBKey,)
+                        ]
+                    )
+            )
+        )
+    );
   }
 
   takeScreenShot() async {
     BuildContext? cC = previewContainer.currentContext;
     if (cC != null) {
-      RenderRepaintBoundary boundary = cC.findRenderObject() as RenderRepaintBoundary;
+      RenderRepaintBoundary boundary =
+          cC.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage();
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
       return byteData;
     }
   }
@@ -90,10 +101,8 @@ class MyHomePage extends StatelessWidget {
       debugPrint("now we can share the screenshot");
       /*await EsysFlutterShare.shareImage(
           'Game.png', bytes, 'Save The World');*/
-    }
-    catch (e) {
+    } catch (e) {
       print('error: $e');
     }
-
   }
 }

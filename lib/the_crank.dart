@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 class TheCrank extends StatefulWidget {
-  TheCrank({Key? key}) : super(key: key);
-
+  final GlobalKey donationButtonKey;
+  TheCrank({Key? key,required this.donationButtonKey}) : super(key: key);
   @override
-  _CrankState createState() => _CrankState();
+  _CrankState createState() => _CrankState(donationButtonKey);
 }
 
 class _CrankState extends State<TheCrank> {
@@ -21,6 +21,8 @@ class _CrankState extends State<TheCrank> {
   int nullCounter = 0;
   double speed = 1.0;
   AudioPlayer player = AudioPlayer();
+  final GlobalKey donationButtonKey;
+  _CrankState(this.donationButtonKey);
 
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -54,32 +56,39 @@ class _CrankState extends State<TheCrank> {
     Offset centerOfGestureDetector = Offset(250,250);
     final touchPositionFromCenter =
         details.localPosition - centerOfGestureDetector;
+    double dSpeed = 0.0;
+    time = details.sourceTimeStamp!.inMilliseconds;
+    angle = touchPositionFromCenter.direction;
+    fullAngle += oldAngle-angle;
+    dSpeed = dp(((oldAngle - angle) / (oldTime - time))*5, 3)-0.02;
+    //  print("deltaSpeed " + dSpeed.toString());
+    speed = speed + dSpeed;
+    //   print("resultingSpeed " + speed.toString());
+    //TODO: move player calls outside to enable await?
+    if (!player.playing) {
+      player.play();
+      speed=1.0;
+      nullCounter = 0;
+    } else {
+      if (speed > 0.1) {
+        nullCounter = 0;
+        player.setSpeed(speed);
+        oldAngle = angle;
+        oldTime = time;
+      }
+      else {
+        nullCounter++;
+        if (nullCounter > 10) player.pause();
+      }
+    }
+    if (fullAngle>2*pi){
+      print("Calling onFullRotation");
+      fullAngle=0;
+       if (donationButtonKey.currentState != null)
+          donationButtonKey.currentState?.setState(() {});
+    }
     setState(
       () {
-        double dSpeed = 0.0;
-        time = details.sourceTimeStamp!.inMilliseconds;
-        angle = touchPositionFromCenter.direction;
-        fullAngle += angle;
-        dSpeed = dp(((oldAngle - angle) / (oldTime - time))*5, 3)-0.02;
-      //  print("deltaSpeed " + dSpeed.toString());
-        speed = speed + dSpeed;
-     //   print("resultingSpeed " + speed.toString());
-        if (!player.playing) {
-          player.play();
-          speed=1.0;
-          nullCounter = 0;
-        } else {
-          if (speed > 0.1) {
-            nullCounter = 0;
-            player.setSpeed(speed);
-            oldAngle = angle;
-            oldTime = time;
-          }
-          else {
-            nullCounter++;
-            if (nullCounter > 10) player.pause();
-          }
-        }
       },
     );
   }
