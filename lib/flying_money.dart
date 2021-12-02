@@ -11,7 +11,7 @@ class FlyingMoneyState extends State<FlyingMoney> with SingleTickerProviderState
   late AnimationController control;
   late Animation<double> rot;
   late Animation<double> trasl;
-
+  
   @override
   void initState() {
     super.initState();
@@ -40,10 +40,15 @@ class FlyingMoneyState extends State<FlyingMoney> with SingleTickerProviderState
         animation: control,
         builder: (_, child) => Stack(children: <Widget>[
               Positioned(
-                top: 100,
-                left: trasl.value,
-                child: Transform(transform: Matrix4.rotationZ(rot.value), alignment: Alignment.center, child: Image.asset('assets/images/Money.png')),
+                top: trasl.value,
+                left: 100,
+                child: Transform(
+                    transform: Matrix4.rotationZ(rot.value)..scale(0.1),
+                    alignment: Alignment.center,
+                    child: Image.asset('assets/images/Money.png')),
               ),
-            ]));
+            ]
+        )
+    );
   }
 }
