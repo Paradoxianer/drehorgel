@@ -29,8 +29,11 @@ class MyHomePage extends StatelessWidget {
   final String title;
   GlobalKey previewContainer = new GlobalKey();
   GlobalKey dBKey  = new GlobalKey();
-  //final ValueNotifier<int> _counter = ValueNotifier<int>(0);
-
+  //TODO: Add About Dialog
+  /*include
+  https://pixabay.com/vectors/arrow-rotate-ccw-left-turn-blue-293932/
+  https://pixabay.com/illustrations/christmas-background-landscape-4701783/
+  */
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override

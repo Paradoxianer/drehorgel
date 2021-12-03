@@ -24,6 +24,8 @@ class DonationButtonState extends State<DonationButton>
   _launchURL() async {
     String donateUrl = "";
     if (money > 0.25) {
+      if (money > 100 )
+        //TODO: Add a alert  Dialog to make shure that people know that they will donat this amount of money
       donateUrl = _url + money.toStringAsFixed(2).replaceAll(".", ",");
     } else {
       donateUrl = _url + 5.00.toString();
