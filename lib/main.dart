@@ -87,6 +87,8 @@ class MyHomePage extends StatelessWidget {
                       Image.asset(
                         'assets/images/drehorgel.png'
                       ),
+
+                ),
                       TheCrank(donationButtonKey: dBKey,),
                     ],
                   ),

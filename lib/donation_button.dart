@@ -11,7 +11,7 @@ class DonationButton extends StatefulWidget {
 
 class DonationButtonState extends State<DonationButton>
     with SingleTickerProviderStateMixin {
-  double money = 200.0;
+  double money = 0.0;
   int oldRot = 0;
   final String _url =
       'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html#custom1=273&betrag=';
@@ -58,16 +58,16 @@ class DonationButtonState extends State<DonationButton>
         money += 50;
       else if (rng.nextInt(500001) / 500000 == 1)
         money += 20;
-      else if (rng.nextInt(5001) / 5000 == 1)
+      else if (rng.nextInt(50001) / 50000 == 1)
         money += 10;
-      else if (rng.nextInt(1001) / 1000 == 1)
+      else if (rng.nextInt(10001) / 10000 == 1)
         money += 5;
       else {
-        int euros = (rng.nextInt(1001) / 1000).toInt();
+        int euros = (rng.nextInt(20001) / 10000).toInt();
         if (euros > 0)
           money += euros;
         else
-          money += dp(rng.nextInt(1000) / 100, 2);
+          money += dp(rng.nextInt(10000) / 1000, 2);
       }
       money = dp(money, 2);
     });

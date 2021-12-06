@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:orgel/globals.dart';
 
 class TheCrank extends StatefulWidget {
   final GlobalKey donationButtonKey;
@@ -25,15 +26,24 @@ class _CrankState extends State<TheCrank> {
   _CrankState(this.donationButtonKey);
 
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onPanUpdate: _onPanUpdateHandler,
-        onPanEnd: _onPanEndHandler,
-
-        child: Transform(
-            transform: new Matrix4.rotationZ(angle),
-            alignment: FractionalOffset.center,
-            child: Image.asset('assets/images/kurbel_margin.png')
-        )
+    double scale =MediaQuery.of(context).size.width/orgelSize.width;
+    if (scale >1)
+      scale=1.0;
+    Offset moveTo = crankPoint*scale-(crankSize/scale).center(Offset.zero);
+    return Transform.translate(
+        //TODO: die Berechnung des Mittelpunktes anha der aktuellen Scale einbeziehen
+        offset: moveTo,
+      child: GestureDetector(
+                onPanUpdate: _onPanUpdateHandler,
+                onPanEnd: _onPanEndHandler,
+                child: Transform(
+                    transform: new Matrix4.rotationZ(angle)..scale(scale),
+                  //transform: new Matrix4.identity()..rotateZ(angle),
+                    alignment: FractionalOffset.center,
+                    child: Image.asset(
+                        'assets/images/kurbel_margin.png')
+                )
+      )
     );
   }
 
