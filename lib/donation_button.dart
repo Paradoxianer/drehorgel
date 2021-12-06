@@ -67,7 +67,7 @@ class DonationButtonState extends State<DonationButton>
         if (euros > 0)
           money += euros;
         else
-          money += dp(rng.nextInt(10000) / 1000, 2);
+          money += dp(rng.nextInt(10000) / 10000, 2);
       }
       money = dp(money, 2);
     });
