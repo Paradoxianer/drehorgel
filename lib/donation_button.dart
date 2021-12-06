@@ -11,7 +11,7 @@ class DonationButton extends StatefulWidget {
 
 class DonationButtonState extends State<DonationButton>
     with SingleTickerProviderStateMixin {
-  double money = 0.0;
+  double money = 200.0;
   int oldRot = 0;
   final String _url =
       'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html#custom1=273&betrag=';
@@ -24,7 +24,8 @@ class DonationButtonState extends State<DonationButton>
   _launchURL() async {
     String donateUrl = "";
     if (money > 0.25) {
-      if (money > 100 )
+      if (money > 200 )
+          await _showMyDialog();
         //TODO: Add a alert  Dialog to make shure that people know that they will donat this amount of money
       donateUrl = _url + money.toStringAsFixed(2).replaceAll(".", ",");
     } else {
@@ -70,5 +71,37 @@ class DonationButtonState extends State<DonationButton>
       }
       money = dp(money, 2);
     });
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.red,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(32.0))),
+          title: const Text('Große Spende'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Danke dass du spenden möchtest'),
+                Text('Bitte beachte, der erorgelte Betrag wird automatisch in das Spendenformular übernommen.'),
+                Text('Du kannst den Betrag auf unserer Website noch ändern.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK',style: TextStyle(color: Colors.white),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
