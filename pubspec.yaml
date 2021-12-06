@@ -26,6 +26,8 @@ dependencies:
 
   just_audio: ^0.9.18
   url_launcher: ^6.0.16
+  share_plus: ^3.0.4
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
