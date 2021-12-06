@@ -2,49 +2,66 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:orgel/globals.dart';
 
 class TheCrank extends StatefulWidget {
   final GlobalKey donationButtonKey;
+
   TheCrank({Key? key,required this.donationButtonKey}) : super(key: key);
   @override
   _CrankState createState() => _CrankState(donationButtonKey);
 }
 
 class _CrankState extends State<TheCrank> {
-  // TODO: add a random amout of money to your donation pot (maybe have a "all time collection" and a "now collection"
-  double fullAngle = 0.0;
-  double oldAngle = 0.0;
-  double angle = 0.0;
-  int oldTime = 0;
-  int time = 0;
-  int nullCounter = 0;
-  double speed = 1.0;
+  double fullAngle  = 0.0;
+  double oldAngle   = 0.0;
+  double angle      = 0.0;
+  int oldTime       = 0;
+  int time          = 0;
+  int nullCounter   = 0;
+  double speed      = 1.0;
+  double scale      = 1.0;
   AudioPlayer player = AudioPlayer();
   final GlobalKey donationButtonKey;
+
   _CrankState(this.donationButtonKey);
 
   Widget build(BuildContext context) {
-    double scale =MediaQuery.of(context).size.width/orgelSize.width;
+    scale =  MediaQuery.of(context).size.width / orgelSize.width;
+    double hgth =  MediaQuery.of(context).size.height;
+    print ("Height=$hgth");
     if (scale >1)
       scale=1.0;
-    Offset moveTo = crankPoint*scale-(crankSize/scale).center(Offset.zero);
-    return Transform.translate(
-        //TODO: die Berechnung des Mittelpunktes anha der aktuellen Scale einbeziehen
-        offset: moveTo,
+    Offset sCP = crankPoint*scale;
+    Size cS = crankSize*scale;
+    Offset cSC = cS.center(Offset.zero);
+    Offset moveTo = Offset(sCP.dx-cSC.dx, sCP.dy-cSC.dy);
+    //print"crankPoint=$sCP");
+    //print"crankMiddle=$cSC");
+    //print"MoveTo=$moveTo");
+    return Positioned(
+      left: moveTo.dx,
+        bottom: moveTo.dy,
+        //TODO: die Berechnung des Mittelpunktes anhand der aktuellen Scale einbeziehen
       child: GestureDetector(
                 onPanUpdate: _onPanUpdateHandler,
                 onPanEnd: _onPanEndHandler,
                 child: Transform(
-                    transform: new Matrix4.rotationZ(angle)..scale(scale),
-                  //transform: new Matrix4.identity()..rotateZ(angle),
+                    transform: new Matrix4.rotationZ(angle-pi/2),
                     alignment: FractionalOffset.center,
-                    child: Image.asset(
-                        'assets/images/kurbel_margin.png')
+                    child:Container(
+                      height:cS.height,
+                      width: cS.width,
+                      child: Image.asset(
+                        'assets/images/kurbel_margin.png',
+                        fit: BoxFit.fill,
+                      )
+                    )
                 )
-      )
-    );
+                )
+      );
   }
 
   double dp(double val, int places) {
@@ -63,13 +80,12 @@ class _CrankState extends State<TheCrank> {
   }
 
   void _onPanUpdateHandler(DragUpdateDetails details) {
-    Offset centerOfGestureDetector = Offset(250,250);
     final touchPositionFromCenter =
-        details.localPosition - centerOfGestureDetector;
+        details.localPosition - (crankSize*scale).center(Offset.zero);
     double dSpeed = 0.0;
     double dAngle = 0.0;
     time = details.sourceTimeStamp!.inMilliseconds;
-//    The angle of this offset as radians clockwise from the positive x-axis, in the range -pi to pi, assuming positive values of the x-axis go to the right and positive values of the y-axis go down. [...]
+  //    The angle of this offset as radians clockwise from the positive x-axis, in the range -pi to pi, assuming positive values of the x-axis go to the right and positive values of the y-axis go down. [...]
     angle = pi + touchPositionFromCenter.direction;
     dAngle =(angle - oldAngle);
     if (dAngle>pi) {
@@ -80,9 +96,7 @@ class _CrankState extends State<TheCrank> {
     }
     fullAngle += dAngle;
     dSpeed = dp(((angle-oldAngle) / (time-oldTime))*5, 3)-0.02;
-    //  print("deltaSpeed " + dSpeed.toString());
     speed = speed + dSpeed;
-    //   print("resultingSpeed " + speed.toString());
     //TODO: move player calls outside to enable await?
     if (!player.playing) {
       player.play();

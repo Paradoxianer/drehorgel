@@ -83,20 +83,19 @@ class MyHomePage extends StatelessWidget {
                   children:<Widget>[
                     Stack(
                     clipBehavior: Clip.none,
+                    alignment: Alignment.bottomLeft,
                     children: <Widget>[
                       Image.asset(
                         'assets/images/drehorgel.png'
                       ),
-
-                ),
-                      TheCrank(donationButtonKey: dBKey,),
+                      TheCrank(donationButtonKey: dBKey),
                     ],
                   ),
                     Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                         /* FloatingActionButton(
+        /*                  FloatingActionButton(
                               onPressed: () {
                                 shareScreenshot();
                               },
@@ -121,17 +120,19 @@ class MyHomePage extends StatelessWidget {
       ui.Image image = await boundary.toImage();
       ByteData? byteData =
           await image.toByteData(format: ui.ImageByteFormat.png);
-      return byteData;
+      //File imgFile =new File('$directory/screenshot.png');
+      //imgFile.writeAsBytes(pngBytes);
     }
   }
 
   Future shareScreenshot() async {
     try {
       await takeScreenShot();
-      debugPrint("now we can share the screenshot");
-      Share.shareFiles(['assets/Screenshot.jpg'], text: 'Ich hab für die Heilsarmee georgelt - probiers auch mal! www.projectconceptor.de/orgeln');
+      //debugprint"now we can share the screenshot");
+      //Share.shareFiles(['$directory/screenshot.png'], text: 'Ich hab für die Heilsarmee georgelt - probiers auch mal! www.projectconceptor.de/orgeln');
+      //Share.share("Ich hab für die Heilsarmee georgelt");
     } catch (e) {
-      print('error: $e');
+      //print'error: $e');
     }
   }
 }
