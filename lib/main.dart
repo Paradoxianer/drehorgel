@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:orgel/the_crank.dart';
 import 'package:orgel/donation_button.dart';
 
@@ -31,8 +32,8 @@ class MyHomePage extends StatelessWidget {
   GlobalKey dBKey  = new GlobalKey();
   //TODO: Add About Dialog
   /*include
-  https://pixabay.com/vectors/arrow-rotate-ccw-left-turn-blue-293932/
-  https://pixabay.com/illustrations/christmas-background-landscape-4701783/
+  
+  
   */
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -43,47 +44,71 @@ class MyHomePage extends StatelessWidget {
         child: Scaffold(
             appBar: AppBar(
               // TODO: add the Money Counter
-              title: Text(title),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget> [
+                    Text(title),
+                    IconButton(
+                        onPressed: (){
+                         showAboutDialog(
+                           applicationName: "Orgeln",
+                           context: context,
+                            applicationVersion: '1.0.1',
+                           applicationIcon: Icon(Icons.settings_applications),
+                           children: <Widget>[
+                             Text("Programmiert von Matthias Lindner\n"),
+                             Text("https://pixabay.com/vectors/arrow-rotate-ccw-left-turn-blue-293932"),
+                             Text("https://pixabay.com/illustrations/christmas-background-landscape-4701783\n"),
+                             Text("===== DANK ====="),
+                             Text("Musik - Daniel Matzeit"),
+                             Text("und Florian Walz... links kommen noch")
+                           ]
+                         );
+                        },
+                        icon: Icon(Icons.three_p_outlined))
+                  ]
+              )
             ),
             body: Container(
                 decoration: BoxDecoration(
                   image:  DecorationImage(
-                    image: AssetImage("assets/images/background.png"),
+                    image: AssetImage("assets/images/background.jpg"),
                     fit: BoxFit.cover
                   )
                 ),
                 child: Center(
-                  child: Stack(
+                  child:Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                  children:<Widget>[
+                    Stack(
                     clipBehavior: Clip.none,
                     children: <Widget>[
                       Image.asset(
                         'assets/images/drehorgel.png'
                       ),
-                      Positioned(top: -100, left: 300,
-                          child: TheCrank(donationButtonKey: dBKey,),
-                      )
+                      TheCrank(donationButtonKey: dBKey,),
                     ],
                   ),
-                )
-            ),
-            bottomNavigationBar: BottomAppBar(
-                    elevation: 0.0,
-                    child: Row(
+                    Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          /*FloatingActionButton(
-                            onPressed: () {
-                              shareScreenshot();
-                            },
-                            child: Icon(Icons.share)
-                        ),*/
-                          DonationButton(key: dBKey,)
+                         /* FloatingActionButton(
+                              onPressed: () {
+                                shareScreenshot();
+                              },
+                              child: Icon(Icons.share)
+                          ),*/
+                          DonationButton(key: dBKey)
                         ]
                     )
+                  ]
+                )
+                )
             )
-        )
-    );
+            )
+        );
   }
 
   takeScreenShot() async {
@@ -102,8 +127,7 @@ class MyHomePage extends StatelessWidget {
     try {
       await takeScreenShot();
       debugPrint("now we can share the screenshot");
-      /*await EsysFlutterShare.shareImage(
-          'Game.png', bytes, 'Save The World');*/
+      Share.shareFiles(['assets/Screenshot.jpg'], text: 'Ich hab für die Heilsarmee georgelt - probiers auch mal! www.projectconceptor.de/orgeln');
     } catch (e) {
       print('error: $e');
     }
