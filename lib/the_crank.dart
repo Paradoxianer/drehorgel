@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:orgel/globals.dart';
 
@@ -30,17 +29,12 @@ class _CrankState extends State<TheCrank> {
 
   Widget build(BuildContext context) {
     scale =  MediaQuery.of(context).size.width / orgelSize.width;
-    double hgth =  MediaQuery.of(context).size.height;
-    print ("Height=$hgth");
     if (scale >1)
       scale=1.0;
     Offset sCP = crankPoint*scale;
     Size cS = crankSize*scale;
     Offset cSC = cS.center(Offset.zero);
     Offset moveTo = Offset(sCP.dx-cSC.dx, sCP.dy-cSC.dy);
-    //print"crankPoint=$sCP");
-    //print"crankMiddle=$cSC");
-    //print"MoveTo=$moveTo");
     return Positioned(
       left: moveTo.dx,
         bottom: moveTo.dy,
