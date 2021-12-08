@@ -26,7 +26,6 @@ class DonationButtonState extends State<DonationButton>
     if (money > 0.25) {
       if (money > 200 )
           await _showMyDialog();
-        //TODO: Add a alert  Dialog to make shure that people know that they will donat this amount of money
       donateUrl = _url + money.toStringAsFixed(2).replaceAll(".", ",");
     } else {
       donateUrl = _url + 5.00.toString();

@@ -42,7 +42,6 @@ class _CrankState extends State<TheCrank> {
     return Positioned(
       left: moveTo.dx,
         bottom: moveTo.dy,
-        //TODO: die Berechnung des Mittelpunktes anhand der aktuellen Scale einbeziehen
       child: GestureDetector(
                 onPanUpdate: _onPanUpdateHandler,
                 onPanEnd: _onPanEndHandler,
