@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:orgel/globals.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:orgel/the_crank.dart';
@@ -81,15 +82,14 @@ class MyHomePage extends StatelessWidget {
                 child: Center(
                   child:Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
                   children:<Widget>[
                     Stack(
-                      clipBehavior: Clip.none,
+                    clipBehavior: Clip.none,
                     alignment: Alignment.bottomLeft,
                     children: <Widget>[
                       Image.asset(
                         'assets/images/drehorgel.png',
-                          fit: BoxFit.contain
                       ),
                       TheCrank(donationButtonKey: dBKey),
                     ],

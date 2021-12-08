@@ -28,13 +28,17 @@ class _CrankState extends State<TheCrank> {
   _CrankState(this.donationButtonKey);
 
   Widget build(BuildContext context) {
-    scale =  MediaQuery.of(context).size.width / orgelSize.width;
+    scale= MediaQuery.of(context).size.width / orgelSize.width;
     if (scale >1)
       scale=1.0;
     Offset sCP = crankPoint*scale;
     Size cS = crankSize*scale;
     Offset cSC = cS.center(Offset.zero);
     Offset moveTo = Offset(sCP.dx-cSC.dx, sCP.dy-cSC.dy);
+    /*print("scale=$scale");
+    print("ParentSize=${MediaQuery.of(context).size}");
+    print("crankSize=$cS");
+    print("moveTo=$moveTo");*/
     return Positioned(
       left: moveTo.dx,
         bottom: moveTo.dy,
@@ -46,6 +50,11 @@ class _CrankState extends State<TheCrank> {
                     transform: new Matrix4.rotationZ(angle-pi/2),
                     alignment: FractionalOffset.center,
                     child:Container(
+                      /*  decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                          )
+                        ),*/
                       height:cS.height,
                       width: cS.width,
                       child: Image.asset(
