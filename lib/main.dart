@@ -2,10 +2,12 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:orgel/globals.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:orgel/the_crank.dart';
@@ -33,11 +35,6 @@ class MyHomePage extends StatelessWidget {
   final String title;
   GlobalKey previewContainer = new GlobalKey();
   GlobalKey dBKey  = new GlobalKey();
-  //TODO: Add About Dialog
-  /*include
-  
-  
-  */
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
@@ -46,7 +43,6 @@ class MyHomePage extends StatelessWidget {
         key: previewContainer,
         child: Scaffold(
             appBar: AppBar(
-              // TODO: add the Money Counter
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget> [
@@ -59,13 +55,50 @@ class MyHomePage extends StatelessWidget {
                             applicationVersion: '1.0.1',
                            applicationIcon: Icon(Icons.settings_applications),
                            children: <Widget>[
-                             Text("Programmiert von Matthias Lindner\n"),
-                             Text("https://pixabay.com/vectors/arrow-rotate-ccw-left-turn-blue-293932"),
-                             Text("https://pixabay.com/illustrations/christmas-background-landscape-4701783\n"),
-                             Text("===== DANK geht an ====="),
-                             Text("Musik - Daniel Matzeit "),
-                             Text("und Florian Walz... links kommen noch")
-                           ]
+                         RichText(
+                         text:
+                              TextSpan(
+                                text: 'Ein App mit der man Drehorgeln kann.\nSimuliert wird das weihnacthliche Spendensammeln der Heilsarmee.\nAm Ende hat der Nutzer die Möglichkeit den erorgelten Betrag zu spenden.\n\n',
+                               // style: DefaultTextStyle.of(context).style,
+                             children:  <TextSpan>[
+                               TextSpan(text: "Idee und Umsetzung - Matthias Lindner\n\n"),
+                               TextSpan(text: "Datenschutzerklärung - auf github.com\n",
+                                 style: TextStyle(color: Colors.blue),
+                                 recognizer: new TapGestureRecognizer()
+                                   ..onTap = () { launch('https://raw.githubusercontent.com/Paradoxianer/drehorgel/main/Datenschutz');
+                                   },
+                               ),
+                               TextSpan(text: "AGB  - auf github.com\n\n\n",
+                                 style: TextStyle(color: Colors.blue),
+                                 recognizer: new TapGestureRecognizer()
+                                   ..onTap = () { launch('https://raw.githubusercontent.com/Paradoxianer/drehorgel/main/AGB');
+                                   },
+                               ),
+                               TextSpan(text:"===== DANK geht an =====\n\n"),
+                               TextSpan(text:"Hintergrund - "),
+                               TextSpan(text:"Pixabay\n",
+                                 style: TextStyle(color: Colors.blue),
+                                 recognizer: new TapGestureRecognizer()
+                                   ..onTap = () { launch('https://pixabay.com/illustrations/christmas-background-landscape-4701783');
+                                   },),
+                               TextSpan(text:"Musik - Daniel Matzeit - "),
+                               TextSpan(text:"Website\n",
+                                 style: TextStyle(color: Colors.blue),
+                                 recognizer: new TapGestureRecognizer()
+                                   ..onTap = () { launch('https://profis.check24.de/profil/tastenheld/aqgrra');
+                                   },
+                               ),
+                               TextSpan(text:"Florian Walz - "),
+                               TextSpan(text:"Website\n",
+                                   style: TextStyle(color: Colors.blue),
+                           recognizer: new TapGestureRecognizer()
+                             ..onTap = () { launch('https://profis.check24.de/profil/tastenheld/aqgrra');
+                             },
+                               )
+                              ]
+                              )
+                         )
+                          ]
                          );
                         },
                         icon: Icon(Icons.three_p_outlined))
@@ -98,12 +131,12 @@ class MyHomePage extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          FloatingActionButton(
+                          /*FloatingActionButton(
                               onPressed: () {
                                 shareScreenshot();
                               },
                               child: Icon(Icons.share)
-                          ),
+                          ),*/
                           DonationButton(key: dBKey)
                         ]
                     )
