@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:orgel/About.dart';
+import 'package:orgel/organ.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:path_provider/path_provider.dart';
@@ -70,40 +71,31 @@ class MyHomePage extends StatelessWidget {
                     fit: BoxFit.cover
                   )
                 ),
-                child: Center(
-                  child:Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                  children:<Widget>[
-                    Stack(
+                child:
+                Stack(
+                  fit: StackFit.expand,
                     clipBehavior: Clip.none,
-                    alignment: Alignment.bottomLeft,
                     children: <Widget>[
-                      Image.asset(
-                        'assets/images/drehorgel.png',
-                      ),
+                      Organ(1.0),
+                      //DonationButton(key: dBKey),
                       TheCrank(donationButtonKey: dBKey),
+                      Positioned.fill(
+                        child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: FloatingActionButton(
+                                onPressed: () {
+                                  shareScreenshot();
+                                },
+                                child: Icon(Icons.share)
+                            )
+                        )
+                      )
+
                     ],
                   ),
-                    Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          /*FloatingActionButton(
-                              onPressed: () {
-                                shareScreenshot();
-                              },
-                              child: Icon(Icons.share)
-                          ),*/
-                          DonationButton(key: dBKey)
-                        ]
-                    )
-                  ]
                 )
                 )
-            )
-            )
-        );
+            );
   }
 
   takeScreenShot() async {

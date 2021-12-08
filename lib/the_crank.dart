@@ -31,7 +31,7 @@ class _CrankState extends State<TheCrank> {
     scale= MediaQuery.of(context).size.width / orgelSize.width;
     if (scale >1)
       scale=1.0;
-    Offset sCP = crankPoint*scale;
+    Offset sCP = crankOffset*scale;
     Size cS = crankSize*scale;
     Offset cSC = cS.center(Offset.zero);
     Offset moveTo = Offset(sCP.dx-cSC.dx, sCP.dy-cSC.dy);
