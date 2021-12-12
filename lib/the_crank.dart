@@ -75,6 +75,10 @@ class _CrankState extends State<TheCrank> {
   }
 
   double dp(double val, int places) {
+    if (val == double.infinity)
+        return double.infinity;
+    else if (val == double.nan)
+        return double.nan;
     num mod = pow(10.0, places);
     return ((val * mod).round().toDouble() / mod);
   }
@@ -105,36 +109,39 @@ class _CrankState extends State<TheCrank> {
       dAngle = angle - (oldAngle - 2 * pi);
     }
     fullAngle += dAngle;
-    dSpeed = dp(((angle - oldAngle) / (time - oldTime)) * 4, 3) - 0.02;
-    speed = speed + dSpeed;
-    //TODO: move player calls outside to enable await?
-    if (!player.playing) {
-      player.play();
-      speed = 1.0;
-      nullCounter = 0;
-    } else {
-      if (speed > 0.1) {
+    dSpeed = dp(((angle - oldAngle) / (time - oldTime)) * 5, 3) - 0.02;
+    if (dSpeed!=double.infinity &&  dSpeed!=double.nan) {
+      speed = speed + dSpeed;
+      //TODO: move player calls outside to enable await?
+      if (!player.playing) {
+        player.play();
+        speed = 1.0;
         nullCounter = 0;
-        player.setSpeed(speed);
+      } else {
+        if (speed > 0.1) {
+          nullCounter = 0;
+          player.setSpeed(speed);
+        }
+        else {
+          nullCounter++;
+          if (nullCounter > 10) player.pause();
+        }
       }
-      else {
-        nullCounter++;
-        if (nullCounter > 10) player.pause();
+      /*  print ("=========");
+        print("dAngle=$dAngle");
+        print("dSpeed=$dSpeed");
+        print("speed=$speed");
+        print("fullAngle=$fullAngle");
+        print("nullCounter=$nullCounter");*/
+      if ((fullAngle > 2 * pi) || (fullAngle < (-2 * pi))) {
+        fullAngle = 0;
+        this.widget.donationButtonKey.currentState?.newMoney();
       }
-    }
-    print ("=========");
-    print("dAngle=$dAngle");
-    print("dSpeed=$dSpeed");
-    print("speed=$speed");
-    print("fullAngle=$fullAngle");
-    print("nullCounter=$nullCounter");
-    if ((fullAngle > 2 * pi) || (fullAngle < (-2 * pi))) {
-      fullAngle = 0;
-      this.widget.donationButtonKey.currentState?.newMoney();
     }
     oldAngle = angle;
     oldTime = time;
     angle -= pi;
+    print("angle=$angle");
     setState(() {});
   }
 }
