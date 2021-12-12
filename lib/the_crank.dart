@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:orgel/donation_button.dart';
 import 'package:orgel/globals.dart';
 
 class TheCrank extends StatefulWidget {
-  ValueNotifier<int> rotation = ValueNotifier<int>(0);
-
-  TheCrank({Key? key,required this.rotation}) : super(key: key);
+  final GlobalKey<DonationButtonState> donationButtonKey;
+  TheCrank({Key? key,required this.donationButtonKey}) : super(key: key);
   @override
   _CrankState createState() => _CrankState();
 }
@@ -125,15 +125,15 @@ class _CrankState extends State<TheCrank> {
     print ("=========");
     print("dAngle=$dAngle");
     print("dSpeed=$dSpeed");
+    print("speed=$speed");
     print("fullAngle=$fullAngle");
     print("nullCounter=$nullCounter");
     if ((fullAngle > 2 * pi) || (fullAngle < (-2 * pi))) {
-      print("!!!!!!!!!\nrotation=${this.widget.rotation.value}");
       fullAngle = 0;
-      this.widget.rotation.value += 1;
-      oldAngle = angle;
-      oldTime = time;
+      this.widget.donationButtonKey.currentState?.newMoney();
     }
+    oldAngle = angle;
+    oldTime = time;
     angle -= pi;
     setState(() {});
   }

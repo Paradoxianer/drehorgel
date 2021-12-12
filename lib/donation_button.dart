@@ -3,24 +3,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'donations.dart';
+
 class DonationButton extends StatefulWidget {
-  final ValueNotifier<double> money;
+  GlobalKey<DonationsState> donations;
   String wichCorps;
   String wichPurpose;
-  final DonationButtonState dbState = DonationButtonState();
-
-  DonationButton({Key? key,required this.money,this.wichCorps="273",this.wichPurpose="Drehorgelspende"}) : super(key: key);
+  
+  DonationButton({Key? key,required this.donations,this.wichCorps="273",this.wichPurpose="Drehorgelspende"}) : super(key: key);
   @override
-  State<DonationButton> createState() => dbState;
-
-  void newMoney() {
-    dbState.newMoney();
-  }
+  State<DonationButton> createState() => new DonationButtonState();
+  
 }
 
 class DonationButtonState extends State<DonationButton>
     with SingleTickerProviderStateMixin {
-
+  double money = 0.0;
   int oldRot = 0;
   final String _url =
       'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html#';
@@ -28,15 +26,15 @@ class DonationButtonState extends State<DonationButton>
   @override
   void initState() {
     super.initState();
-    this.widget.money.value = 0.0;
+    money = 0.0;
   }
 
   _launchURL() async {
     String donateUrl = "";
     donateUrl=_url+"custom1="+this.widget.wichCorps+"&custom2="+this.widget.wichPurpose+"&betrag=";
-    if (this.widget.money.value > 0.25) {
-      if (this.widget.money.value > 200) await _showMyDialog();
-      donateUrl = donateUrl + this.widget.money.value.toStringAsFixed(2).replaceAll(".", ",");
+    if (money > 0.25) {
+      if (money > 200) await _showMyDialog();
+      donateUrl = donateUrl + money.toStringAsFixed(2).replaceAll(".", ",");
     } else {
       donateUrl = donateUrl + 5.00.toString();
     }
@@ -50,7 +48,7 @@ class DonationButtonState extends State<DonationButton>
         tooltip: 'Money collected',
         onPressed: _launchURL,
         icon: Icon(Icons.add_shopping_cart_rounded),
-        label: Text("Spenden: " + this.widget.money.value.toString() + "€"));
+        label: Text("Spenden: " + money.toString() + "€"));
   }
 
   double dp(double val, int places) {
@@ -79,8 +77,9 @@ class DonationButtonState extends State<DonationButton>
         else
           addMoney += dp(rng.nextInt(10000) / 10000, 2);
       }
-      this.widget.money.value = dp(this.widget.money.value+addMoney, 2);
+      money = dp(money+addMoney, 2);
     });
+    this.widget.donations.currentState?.setState(() {});
     setState(() { });
   }
 

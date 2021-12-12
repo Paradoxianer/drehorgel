@@ -43,49 +43,18 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class StatefulWrapper extends StatefulWidget {
-  final Function onInit;
-  final Widget child;
-  const StatefulWrapper({required this.onInit, required this.child});
-  @override
-  _StatefulWrapperState createState() => _StatefulWrapperState();
-}
-class _StatefulWrapperState extends State<StatefulWrapper> {
-  @override
-  void initState() {
-    if(widget.onInit != null) {
-      widget.onInit();
-    }
-    super.initState();
-  }
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
-  }
-}
-
 class MyHomePage extends StatelessWidget {
   final String title;
-  final ValueNotifier<double> _money = ValueNotifier<double>(0.0);
-  final ValueNotifier<int> _rotation = ValueNotifier<int>(0);
 
   GlobalKey previewContainer = new GlobalKey();
-  GlobalKey<DonationButtonState> dBKey  = new GlobalKey();
+  GlobalKey<DonationButtonState> dButtonKey  = new GlobalKey();
+  GlobalKey<DonationsState> donationsKey  = new GlobalKey();
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
 
-  Future _init() async {
-    _rotation.addListener(() {
-      dBKey.currentState?.newMoney();
-    });
-  }
   @override
   Widget build(BuildContext context) {
-    return StatefulWrapper(
-        onInit: () {
-        _init().then((value) {});
-    },
-    child: RepaintBoundary(
+    return  RepaintBoundary(
         key: previewContainer,
         child: Scaffold(
             appBar: AppBar(
@@ -122,17 +91,17 @@ class MyHomePage extends StatelessWidget {
                               alignment: FractionalOffset(0,0),
                             children: <Widget>[
                               Image.asset('assets/images/bucket.png',alignment: Alignment.bottomCenter,),
-                              Donations(money: _money,)
+                              Donations(key: donationsKey,donationButtonKey: dButtonKey)
                             ]
                           )
                       ),
 
                       Organ(),
-                      TheCrank(rotation: _rotation,),
+                      TheCrank(donationButtonKey: dButtonKey),
                       Positioned.fill(
                           child: Align(
                               alignment: Alignment.bottomCenter,
-                              child: DonationButton(key:dBKey,money: _money)
+                              child: DonationButton(key:dButtonKey,donations: donationsKey)
                           )
                       ),
                       /*Positioned.fill(
@@ -151,8 +120,7 @@ class MyHomePage extends StatelessWidget {
                   ),
                 )
                 )
-            )
-    );
+            );
   }
 
   takeScreenShot() async {
