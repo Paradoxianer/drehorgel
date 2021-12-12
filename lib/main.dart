@@ -7,12 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:orgel/About.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:orgel/organ.dart';
+import 'package:orgel/salutisten.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:orgel/the_crank.dart';
 import 'package:orgel/donation_button.dart';
+
+import 'donations.dart';
+import 'globals.dart';
 
 void main() {
   String? corps = Uri.base.queryParameters["custom1"]; //get the parameter for which Corps
@@ -41,13 +45,16 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatelessWidget {
   final String title;
+
   GlobalKey previewContainer = new GlobalKey();
-  GlobalKey dBKey  = new GlobalKey();
+  GlobalKey<DonationButtonState> dButtonKey  = new GlobalKey();
+  GlobalKey<DonationsState> donationsKey  = new GlobalKey();
   MyHomePage({Key? key, required this.title}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
+    return  RepaintBoundary(
         key: previewContainer,
         child: Scaffold(
             appBar: AppBar(
@@ -64,46 +71,56 @@ class MyHomePage extends StatelessWidget {
               )
             ),
             body: Container(
+                alignment: FractionalOffset(0.0,1.0),
                 decoration: BoxDecoration(
                   image:  DecorationImage(
                     image: AssetImage("assets/images/background.jpg"),
                     fit: BoxFit.cover
                   )
                 ),
-                child: Center(
-                  child:Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                  children:<Widget>[
-                    Stack(
+                child:
+                Stack(
+                  fit: StackFit.expand,
                     clipBehavior: Clip.none,
-                    alignment: Alignment.bottomLeft,
+                    alignment: FractionalOffset(0.0,1.0),
                     children: <Widget>[
-                      Image.asset(
-                        'assets/images/drehorgel.png',
+                      Salutisten(),
+                      FractionalTranslation(
+                          translation: topfOffset,
+                            child: Stack(
+                              alignment: FractionalOffset(0,0),
+                            children: <Widget>[
+                              Image.asset('assets/images/bucket.png',alignment: Alignment.bottomCenter,),
+                              Donations(key: donationsKey,donationButtonKey: dButtonKey)
+                            ]
+                          )
                       ),
-                      TheCrank(donationButtonKey: dBKey),
+
+                      Organ(),
+                      TheCrank(donationButtonKey: dButtonKey),
+                      Positioned.fill(
+                          child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: DonationButton(key:dButtonKey,donations: donationsKey)
+                          )
+                      ),
+                      /*Positioned.fill(
+                        child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: FloatingActionButton(
+                                onPressed: () {
+                                  shareScreenshot();
+                                },
+                                child: Icon(Icons.share)
+                            )
+                        )
+                      )*/
+
                     ],
                   ),
-                    Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          /*FloatingActionButton(
-                              onPressed: () {
-                                shareScreenshot();
-                              },
-                              child: Icon(Icons.share)
-                          ),*/
-                          DonationButton(key: dBKey)
-                        ]
-                    )
-                  ]
                 )
                 )
-            )
-            )
-        );
+            );
   }
 
   takeScreenShot() async {
@@ -132,7 +149,7 @@ class MyHomePage extends StatelessWidget {
         }
       }
       print("now we can share the screenshot");
-      Share.shareFiles(['$directory/screenshot.png'], text: 'Ich hab für die Heilsarmee georgelt - probiers auch mal! www.projectconceptor.de/orgeln');
+      Share.shareFiles(['$directory/screenshot.png'], text: 'Ich hab für die Heilsarmee georgelt!\n - probiers auch mal! www.heilsarmee.de/files/orgel-app/index.html');
       //Share.share("Ich hab für die Heilsarmee georgelt");
     } catch (e) {
       print('error: $e');
