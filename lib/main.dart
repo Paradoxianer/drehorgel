@@ -16,7 +16,6 @@ import 'package:orgel/the_crank.dart';
 import 'package:orgel/donation_button.dart';
 
 import 'donations.dart';
-import 'globals.dart';
 
 void main() {
   String? corps = Uri.base.queryParameters["custom1"]; //get the parameter for which Corps
@@ -85,7 +84,7 @@ class MyHomePage extends StatelessWidget {
                     alignment: FractionalOffset(0.0,1.0),
                     children: <Widget>[
                       Salutisten(),
-                      FractionalTranslation(
+                      /*FractionalTranslation(
                           translation: topfOffset,
                             child: Stack(
                               alignment: FractionalOffset(0,0),
@@ -94,7 +93,7 @@ class MyHomePage extends StatelessWidget {
                               Donations(key: donationsKey,donationButtonKey: dButtonKey)
                             ]
                           )
-                      ),
+                      ),*/
 
                       Organ(),
                       TheCrank(donationButtonKey: dButtonKey),
@@ -104,9 +103,9 @@ class MyHomePage extends StatelessWidget {
                               child: DonationButton(key:dButtonKey,donations: donationsKey)
                           )
                       ),
-                      /*Positioned.fill(
+                      Positioned.fill(
                         child: Align(
-                            alignment: Alignment.bottomCenter,
+                            alignment: Alignment.bottomLeft,
                             child: FloatingActionButton(
                                 onPressed: () {
                                   shareScreenshot();
@@ -114,7 +113,7 @@ class MyHomePage extends StatelessWidget {
                                 child: Icon(Icons.share)
                             )
                         )
-                      )*/
+                      )
 
                     ],
                   ),
@@ -129,23 +128,27 @@ class MyHomePage extends StatelessWidget {
   Future shareScreenshot() async {
     try {
       print("takingScreenshot");
-      final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
+      final directory = (await getApplicationDocumentsDirectory()).path; //from path_provide package
+      print('$directory');
       BuildContext? cC = previewContainer.currentContext;
       if (cC != null) {
+        print('cc not null');
         RenderRepaintBoundary boundary =
         cC.findRenderObject() as RenderRepaintBoundary;
-        if (boundary.debugNeedsPaint) {
+        print('$boundary');
+        /*if (boundary.debugNeedsPaint) {
           print("Waiting for boundary to be painted.");
-          await Future.delayed(const Duration(milliseconds: 20));
-        }
+          await Future.delayed(const Duration(milliseconds: 25));
+        }*/
+        await Future.delayed(const Duration(milliseconds: 25));
         ui.Image image = await boundary.toImage();
         ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
         if (byteData!=null) {
-
+          print("we have the data now we are sharing\n");
           Uint8List pngBytes = byteData.buffer.asUint8List();
           File imgFile = new File('$directory/screenshot.png');
-          imgFile.writeAsBytes(pngBytes);
+          await imgFile.writeAsBytes(pngBytes);
         }
       }
       print("now we can share the screenshot");
