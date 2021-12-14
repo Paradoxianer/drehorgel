@@ -23,8 +23,8 @@ class DonationsState extends State<Donations> {
                 child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                        "$money €",
-                        style: TextStyle(fontSize: 100)
+                      money.toStringAsFixed(2).replaceAll(".", ",") + " €",
+                        style: TextStyle(fontSize: 100),
                     )
                 )
             );
