@@ -81,9 +81,12 @@ class MyHomePage extends StatelessWidget {
                 Stack(
                   fit: StackFit.expand,
                     clipBehavior: Clip.none,
-                    alignment: FractionalOffset(0.0,1.0),
+                    alignment: FractionalOffset(0.5,1.0),
                     children: <Widget>[
-                      Salutisten(),
+                      FractionalTranslation(
+                      translation: Offset(0.5,1.0),
+                      child: Salutisten()
+                      ),
                       /*FractionalTranslation(
                           translation: topfOffset,
                             child: Stack(
@@ -127,33 +130,22 @@ class MyHomePage extends StatelessWidget {
 
   Future shareScreenshot() async {
     try {
-      print("takingScreenshot");
       final directory = (await getApplicationDocumentsDirectory()).path; //from path_provide package
-      print('$directory');
       BuildContext? cC = previewContainer.currentContext;
       if (cC != null) {
-        print('cc not null');
         RenderRepaintBoundary boundary =
         cC.findRenderObject() as RenderRepaintBoundary;
-        print('$boundary');
-        /*if (boundary.debugNeedsPaint) {
-          print("Waiting for boundary to be painted.");
-          await Future.delayed(const Duration(milliseconds: 25));
-        }*/
         await Future.delayed(const Duration(milliseconds: 25));
         ui.Image image = await boundary.toImage();
         ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
         if (byteData!=null) {
-          print("we have the data now we are sharing\n");
           Uint8List pngBytes = byteData.buffer.asUint8List();
           File imgFile = new File('$directory/screenshot.png');
           await imgFile.writeAsBytes(pngBytes);
         }
       }
-      print("now we can share the screenshot");
-      Share.shareFiles(['$directory/screenshot.png'], text: 'Ich hab für die Heilsarmee georgelt!\n - probiers auch mal! www.heilsarmee.de/files/orgel-app/index.html');
-      //Share.share("Ich hab für die Heilsarmee georgelt");
+      Share.shareFiles(['$directory/screenshot.png'], text: 'Ich habe für die Heilsarmee georgelt!\n - probiers auch mal! https://www.heilsarmee.de/chemnitzkassberg/drehorgeln.html');
     } catch (e) {
       print('error: $e');
     }

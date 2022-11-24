@@ -11,6 +11,7 @@ class Organ extends StatelessWidget {
       alignment: FractionalOffset(0.0,1.0),
         child: FractionallySizedBox(
         widthFactor: 0.7,
+        heightFactor: 0.7,
         child: Image.asset(
           'assets/images/drehorgel.png',
           alignment: FractionalOffset(0.0,1.0),
