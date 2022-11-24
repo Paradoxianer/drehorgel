@@ -12,3 +12,4 @@ Offset maleSalutisOffset = Offset(100,0);
 Size maleSalutisSize = Size(300,904);
 Offset femaleSalutisOffset = Offset(100,0);
 Size femaleSalutisSize = Size(255,956);
+
