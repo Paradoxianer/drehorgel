@@ -16,7 +16,7 @@ class About {
           RichText(
               text:
               TextSpan(
-                  text: 'Ein App mit der man Drehorgeln kann.\nSimuliert wird das weihnacthliche Spendensammeln der Heilsarmee.\nAm Ende hat der Nutzer die Möglichkeit den erorgelten Betrag zu spenden.\n\n',
+                  text: 'Eine App mit der man Drehorgeln kann.\nSimuliert wird das weihnacthliche Spendensammeln der Heilsarmee.\nAm Ende hat der Nutzer die Möglichkeit den erorgelten Betrag zu spenden.\n\n',
                   style: TextStyle(color: Colors.black),
                   children:  <TextSpan>[
                     TextSpan(text: "Idee und Umsetzung - Matthias Lindner\n\n"),
