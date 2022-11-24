@@ -32,7 +32,7 @@ class _CrankState extends State<TheCrank> {
     double scaleH = MediaQuery
         .of(context)
         .size
-        .height / (orgelSize.height);
+        .height / (orgelSize.height/0.7);
     if (scaleH > scaleW)
       scale = scaleW;
     else
@@ -93,7 +93,75 @@ class _CrankState extends State<TheCrank> {
     player.stop();
   }
 
+  Future<void> setSpeedOnAngle(dAngle, angleTime) async {
+    double dSpeed = 0.0;
+    double dTime  = 0.0;
+    //"Normalize" the Angle
+    if (dAngle > pi) {
+      dAngle = (angle - 2 * pi) - oldAngle;
+    }
+    else if (dAngle < -pi) {
+      dAngle = angle - (oldAngle - 2 * pi);
+    }
+    dTime = angleTime - oldTime;
+    dSpeed = dp((dAngle / dTime)*270,3);
+    oldTime = angleTime;
+    print ("=========");
+    print("dAngle=$dAngle");
+    print("dSpeed=$dSpeed");
+    print("nullCounter=$nullCounter");
+    if (dSpeed!=double.infinity &&  dSpeed!=double.nan) {
+      if (!player.playing) {
+        await player.play();
+        speed = 1.0;
+        nullCounter = 0;
+      } else {
+        print("speed=$speed");
+        if (dSpeed > 0.1 && dSpeed < 0.75) {
+          nullCounter = 0;
+          speed = 0.5;
+        }
+        else if (dSpeed >= 0.75 && dSpeed < 1.25) {
+          nullCounter = 0;
+          speed = 1.0;
+        }
+        else if (dSpeed > 1.25) {
+          nullCounter = 0;
+          speed = 2.00;
+        }
+        else {
+          nullCounter++;
+          if (nullCounter > 10)
+            await player.pause();
+        }
+        if (player.playing) {
+          if (player.speed != speed)
+            Future.delayed(Duration(milliseconds: 750) );
+            await player.setSpeed(speed);
+        }
+      }
+    }
+
+  }
+
   void _onPanUpdateHandler(DragUpdateDetails details) {
+    final touchPositionFromCenter =
+        details.localPosition - (crankSize * scale).center(Offset.zero);
+    double dAngle = 0.0;
+    time = details.sourceTimeStamp!.inMilliseconds;
+    angle = pi + touchPositionFromCenter.direction;
+    dAngle = (angle - oldAngle);
+    setSpeedOnAngle(dAngle,time);
+    fullAngle += dAngle;
+    if ((fullAngle > 2 * pi) || (fullAngle < (-2 * pi))) {
+      fullAngle = 0;
+      this.widget.donationButtonKey.currentState?.newMoney();
+    }
+    oldAngle=angle;
+    angle -= pi;
+    setState(() {});
+  }
+  /*void _onPanUpdateHandler(DragUpdateDetails details) {
     final touchPositionFromCenter =
         details.localPosition - (crankSize * scale).center(Offset.zero);
     double dSpeed = 0.0;
@@ -109,7 +177,7 @@ class _CrankState extends State<TheCrank> {
       dAngle = angle - (oldAngle - 2 * pi);
     }
     fullAngle += dAngle;
-    dSpeed = dp(((angle - oldAngle) / (time - oldTime)) * 5, 3) - 0.02;
+    dSpeed = dp(((angle - oldAngle) / (time - oldTime)) * 3, 3) - 0.015;
     if (dSpeed!=double.infinity &&  dSpeed!=double.nan) {
       speed = speed + dSpeed;
       //TODO: move player calls outside to enable await?
@@ -118,21 +186,33 @@ class _CrankState extends State<TheCrank> {
         speed = 1.0;
         nullCounter = 0;
       } else {
-        if (speed > 0.1) {
+        if (speed > 0.1 && speed < 0.75) {
           nullCounter = 0;
-          player.setSpeed(speed);
+          if (player.speed!= 0.75)
+            player.setSpeed(0.75);
+        }
+        else if (speed >= 0.75 && speed < 1.25) {
+          nullCounter = 0;
+          if (player.speed!= 1.00)
+            player.setSpeed(1.00);
+        }
+        else if (speed > 1.25){
+          nullCounter = 0;
+          if (player.speed!= 1.25)
+            player.setSpeed(1.25);
         }
         else {
           nullCounter++;
           if (nullCounter > 10) player.pause();
         }
       }
-      /*  print ("=========");
+        print ("=========");
         print("dAngle=$dAngle");
+        print("dSpeed=$dSpeed");
         print("dSpeed=$dSpeed");
         print("speed=$speed");
         print("fullAngle=$fullAngle");
-        print("nullCounter=$nullCounter");*/
+        print("nullCounter=$nullCounter");
       if ((fullAngle > 2 * pi) || (fullAngle < (-2 * pi))) {
         fullAngle = 0;
         this.widget.donationButtonKey.currentState?.newMoney();
@@ -141,7 +221,7 @@ class _CrankState extends State<TheCrank> {
     oldAngle = angle;
     oldTime = time;
     angle -= pi;
-    print("angle=$angle");
+    //print("angle=$angle");
     setState(() {});
-  }
+  }*/
 }
