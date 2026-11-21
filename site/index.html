@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drehorgel</title>
+  <meta name="description" content="Kurbeln wie die Heilsarmee auf dem Weihnachtsmarkt: Drehorgel-App mit Notenrollen, fallenden Münzen und echtem Spendenlink.">
+  <meta property="og:title" content="Drehorgel – Orgeln für die Heilsarmee">
+  <meta property="og:description" content="Kurbel drehen, Musik machen, Münzen sammeln – und auf Wunsch echt spenden.">
+  <meta property="og:image" content="https://paradoxianer.github.io/drehorgel/img/szene.jpg">
+  <link rel="icon" href="img/icon.png">
+  <style>
+    :root {
+      --bg: #f4e6c4;
+      --paper: #fbf3de;
+      --ink: #4a2e14;
+      --muted: #7a5a3a;
+      --wood: #6b4423;
+      --red: #c0272d;
+      --sky: #5b9bd5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #1f1710;
+        --paper: #2b2017;
+        --ink: #f4e6c4;
+        --muted: #cdb48f;
+        --wood: #b07a48;
+        --red: #e0474d;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    header {
+      background: linear-gradient(#6fa8dc, var(--sky));
+      color: #fff;
+      text-align: center;
+      padding: 40px 16px 0;
+    }
+    header img.icon { width: 88px; height: 88px; border-radius: 22px; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+    h1 { font-family: Georgia, "Noto Serif", serif; font-size: clamp(2rem, 6vw, 3rem); margin: 12px 0 4px; }
+    header p { margin: 0 auto 24px; max-width: 34rem; font-size: 1.1rem; opacity: .95; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 28px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 999px;
+      font-weight: 600; text-decoration: none;
+      background: var(--wood); color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+    .btn.primary { background: var(--red); }
+    .btn:hover { filter: brightness(1.08); }
+    .hero { display: block; width: min(100%, 960px); margin: 0 auto; border-radius: 12px 12px 0 0; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
+    section { margin-bottom: 40px; }
+    h2 { font-family: Georgia, "Noto Serif", serif; color: var(--wood); margin: 0 0 12px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+    @media (min-width: 720px) { .grid { grid-template-columns: 2fr 1fr; } }
+    .card { background: var(--paper); border: 2px solid var(--wood); border-radius: 10px; padding: 20px; }
+    .card img { width: 100%; border-radius: 6px; display: block; }
+    ul { padding-left: 1.2em; margin: 0; }
+    li { margin: 4px 0; }
+    .note { color: var(--muted); font-size: .95rem; }
+    footer { text-align: center; color: var(--muted); font-size: .9rem; padding: 0 16px 32px; }
+    footer a, main a { color: var(--red); }
+  </style>
+</head>
+<body>
+  <header>
+    <img class="icon" src="img/icon.png" alt="">
+    <h1>Drehorgel</h1>
+    <p>Kurbeln wie die Heilsarmee auf dem Weihnachtsmarkt: Musik machen, Münzen sammeln – und auf Wunsch echt spenden.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://play.google.com/store/apps/details?id=de.heilsarmee.orgel">▶ Bei Google Play laden</a>
+      <a class="btn" href="app/">Im Browser ausprobieren</a>
+    </div>
+    <img class="hero" src="img/szene.jpg" alt="Die Drehorgel-Szene mit zwei Salutisten und Spendentopf">
+  </header>
+
+  <main>
+    <section class="grid">
+      <div class="card">
+        <h2>So funktioniert's</h2>
+        <ul>
+          <li>Kurbel drehen – das Tempo der Kurbel ist das Tempo der Musik.</li>
+          <li>Wer aufhört zu kurbeln, hört den Blasebalg leerlaufen.</li>
+          <li>Zwei Notenrollen: Weihnachtslieder und christliche Lieder, mit mehreren Strophen und einzeln wählbar.</li>
+          <li>Beim Spielen fallen Münzen in den Spendentopf.</li>
+          <li>Querformat zeigt die ganze Szene, hochkant nur die Orgel.</li>
+        </ul>
+      </div>
+      <div class="card"><img src="img/hochformat.jpg" alt="Hochformat: nur die Drehorgel mit Betragsschild"></div>
+    </section>
+
+    <section class="card">
+      <h2>Notenrollen</h2>
+      <img src="img/notenrollen.jpg" alt="Auswahl der Notenrollen: Weihnachtsrolle und Standardrolle">
+    </section>
+
+    <section class="card">
+      <h2>Echt spenden</h2>
+      <p>Das erorgelte Geld ist nur gespielt. Wer möchte, kann über „Echt spenden“ an das Korps Chemnitz-Kaßberg der Heilsarmee spenden – die Spende läuft über die Webseite der Heilsarmee und ist steuerlich absetzbar.</p>
+      <p class="note">Im Browser klingt die Orgel etwas einfacher als in der App: Dort wird vorab aufgenommene Musik abgespielt, in der Android-App spielt ein echter Synthesizer.</p>
+    </section>
+  </main>
+
+  <footer>
+    Idee und Umsetzung: Matthias Lindner · Design &amp; Grafik: <a href="https://www.mfw-design.com/">Florian Walz</a><br>
+    <a href="https://github.com/Paradoxianer/drehorgel">Quellcode auf GitHub</a> ·
+    <a href="https://raw.githubusercontent.com/Paradoxianer/drehorgel/main/Datenschutz">Datenschutz</a>
+  </footer>
+</body>
+</html>

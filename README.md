@@ -43,7 +43,7 @@ den erorgelten Betrag kann man am Ende direkt an die Heilsarmee spenden
 ```sh
 flutter test
 flutter build appbundle --release   # benötigt android/key.properties (nicht im Repo)
-flutter build web --release         # base href: /files/orgel-app/ (web/index.html)
+flutter build web --release --base-href /drehorgel/app/   # wird per GitHub Action auf paradoxianer.github.io/drehorgel veröffentlicht
 ```
 
 iOS: siehe [docs/IOS.md](docs/IOS.md).
