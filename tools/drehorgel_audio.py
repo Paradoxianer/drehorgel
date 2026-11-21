@@ -263,7 +263,7 @@ SONGS = [
         chords="""C | F:2 C:2 | F:2 C:2 | G7:2 C:2 | C:2 F:2 | C:2 G7:2 | C:2 F:2 | C:2 G7:2 |
                   C | F:2 C:2 | F:2 C:2 | G7:2 C:2""",
     ),
-    # ---- Standortlieder (Straßenmission) ----
+    # ---- Standardlieder (christliche Lieder für das ganze Jahr) ----
     dict(
         id='amazing_grace', title='Amazing Grace',
         meter=(3, 4), bpm=96, melody_shift=12,
@@ -312,7 +312,7 @@ ROLLS = [
     dict(id='weihnachten', title='Weihnachtsrolle',
          items=[('stille_nacht', 3), ('we_wish_you', 3), ('o_tannenbaum', 3),
                 ('jingle_bells', 2), ('morgen_kommt', 2)]),
-    dict(id='standort', title='Standortrolle',
+    dict(id='standard', title='Standardrolle',
          items=[('amazing_grace', 3), ('when_the_saints', 3),
                 ('ode_an_die_freude', 2), ('michael_row', 3)]),
 ]

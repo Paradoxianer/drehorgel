@@ -11,7 +11,7 @@
   einem leeren Blasebalg.
 - **Notenrollen:** *Weihnachtsrolle* (Stille Nacht, We Wish You a Merry
   Christmas, O Tannenbaum, Jingle Bells, Morgen kommt der Weihnachtsmann) und
-  *Standortrolle* (Amazing Grace, When the Saints Go Marching In, Ode an die
+  *Standardrolle* (Amazing Grace, When the Saints Go Marching In, Ode an die
   Freude, Michael, Row the Boat Ashore) – mit mehreren Strophen, einzelne
   Lieder anwählbar.
 - **Fallendes Geld:** Pro Umdrehung fällt eine Münze in den Spendentopf –

@@ -22,7 +22,7 @@ class OrganRoll {
 
 const List<OrganRoll> rolls = [
   OrganRoll('weihnachten', 'Weihnachtsrolle'),
-  OrganRoll('standort', 'Standortrolle'),
+  OrganRoll('standard', 'Standardrolle'),
 ];
 
 const String soundfontAsset = 'assets/soundfonts/drehorgel.sf2';

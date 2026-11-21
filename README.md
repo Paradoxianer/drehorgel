@@ -16,7 +16,7 @@ den erorgelten Betrag kann man am Ende direkt an die Heilsarmee spenden
   die Orgel leiser und tiefer, beim Anhalten sackt die letzte Note ab
   („Blasebalg leer“).
 - **Notenrollen** wie bei einer echten Drehorgel: *Weihnachtsrolle* und
-  *Standortrolle*, mehrere Strophen pro Lied, Lieder einzeln anwählbar.
+  *Standardrolle*, mehrere Strophen pro Lied, Lieder einzeln anwählbar.
 - Pro Umdrehung fällt eine Münze in den Spendentopf; der Spenden-Button öffnet
   das Spendenformular mit vorbelegtem Betrag.
 
