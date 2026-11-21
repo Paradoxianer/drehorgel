@@ -1,0 +1,86 @@
+{
+ "id": "standort",
+ "title": "Standortrolle",
+ "ppq": 480,
+ "totalTicks": 268320,
+ "durationSec": 282.355,
+ "entries": [
+  {
+   "title": "Amazing Grace",
+   "verse": 1,
+   "verses": 3,
+   "tick": 0,
+   "sec": 0.0
+  },
+  {
+   "title": "Amazing Grace",
+   "verse": 2,
+   "verses": 3,
+   "tick": 22080,
+   "sec": 28.75
+  },
+  {
+   "title": "Amazing Grace",
+   "verse": 3,
+   "verses": 3,
+   "tick": 44160,
+   "sec": 57.5
+  },
+  {
+   "title": "When the Saints Go Marching In",
+   "verse": 1,
+   "verses": 3,
+   "tick": 67200,
+   "sec": 87.5
+  },
+  {
+   "title": "When the Saints Go Marching In",
+   "verse": 2,
+   "verses": 3,
+   "tick": 97440,
+   "sec": 112.7
+  },
+  {
+   "title": "When the Saints Go Marching In",
+   "verse": 3,
+   "verses": 3,
+   "tick": 127680,
+   "sec": 137.9
+  },
+  {
+   "title": "Ode an die Freude",
+   "verse": 1,
+   "verses": 2,
+   "tick": 158880,
+   "sec": 163.9
+  },
+  {
+   "title": "Ode an die Freude",
+   "verse": 2,
+   "verses": 2,
+   "tick": 189600,
+   "sec": 195.9
+  },
+  {
+   "title": "Michael, Row the Boat Ashore",
+   "verse": 1,
+   "verses": 3,
+   "tick": 221280,
+   "sec": 228.9
+  },
+  {
+   "title": "Michael, Row the Boat Ashore",
+   "verse": 2,
+   "verses": 3,
+   "tick": 236640,
+   "sec": 246.355
+  },
+  {
+   "title": "Michael, Row the Boat Ashore",
+   "verse": 3,
+   "verses": 3,
+   "tick": 252000,
+   "sec": 263.809
+  }
+ ]
+}
