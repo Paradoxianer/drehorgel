@@ -46,6 +46,8 @@ flutter build appbundle --release   # benötigt android/key.properties (nicht im
 flutter build web --release         # base href: /files/orgel-app/ (web/index.html)
 ```
 
+iOS: siehe [docs/IOS.md](docs/IOS.md).
+
 Der Debug-Build hat die App-ID `de.heilsarmee.orgel.debug` und kann neben der
 Play-Store-Version installiert werden.
 
