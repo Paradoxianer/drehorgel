@@ -1,33 +1,38 @@
-import 'package:flutter/cupertino.dart';
-import 'package:orgel/donation_button.dart';
-import 'package:orgel/globals.dart';
+import 'dart:math';
 
-class Donations extends StatefulWidget {
-  final GlobalKey<DonationButtonState> donationButtonKey;
-  const Donations({ Key? key,required this.donationButtonKey}) : super(key: key);
+import 'package:flutter/foundation.dart';
 
-  @override
-  State<Donations> createState() => DonationsState();
-}
+/// Der erorgelte Betrag. Wird von der Kurbel befüllt (eine Umdrehung = eine
+/// Spende) und von Spenden-Button, Tafel und fallendem Geld angezeigt.
+class Donations extends ChangeNotifier {
+  final Random _rng = Random();
+  double money = 0.0;
 
-class DonationsState extends State<Donations> {
+  /// Betrag der letzten Spende (für das fallende Geld: Schein oder Münze).
+  double lastAmount = 0.0;
 
-  @override
-  Widget build(BuildContext context) {
-    double? money = this.widget.donationButtonKey.currentState?.money;
-    if (money == null)
-      money=0.0;
-    return
-      FractionalTranslation(
-                translation: Offset(1.5, 0.75),
-                child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      money.toStringAsFixed(2).replaceAll(".", ",") + " €",
-                        style: TextStyle(fontSize: 100),
-                    )
-                )
-            );
-
+  void newMoney() {
+    // Wahrscheinlichkeiten wie in der bisherigen Version.
+    double add;
+    if (_rng.nextDouble() < 1e-9) {
+      add = 100;
+    } else if (_rng.nextDouble() < 1e-8) {
+      add = 50;
+    } else if (_rng.nextDouble() < 2e-6) {
+      add = 20;
+    } else if (_rng.nextDouble() < 2e-5) {
+      add = 10;
+    } else if (_rng.nextDouble() < 1e-4) {
+      add = 5;
+    } else if (_rng.nextBool()) {
+      add = 1;
+    } else {
+      add = _rng.nextInt(100) / 100.0;
+    }
+    lastAmount = add;
+    money = ((money + add) * 100).roundToDouble() / 100;
+    notifyListeners();
   }
+
+  String get formatted => '${money.toStringAsFixed(2).replaceAll('.', ',')} €';
 }

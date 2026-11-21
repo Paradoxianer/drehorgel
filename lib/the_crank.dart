@@ -1,227 +1,152 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:orgel/donation_button.dart';
-import 'package:orgel/globals.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/widgets.dart';
 
+/// Die Kurbel. Wird als quadratisches Widget so platziert, dass die
+/// Drehachse genau in seiner Mitte liegt (siehe Scene). Alle Koordinaten sind
+/// Bühnenkoordinaten – die Skalierung erledigt die FittedBox der Szene, auch
+/// für die Touch-Positionen.
+///
+/// Ausgabe:
+///  * [onTempo]: stufenloser Tempo-Faktor (1.0 = [nominalRps] Umdrehungen/s,
+///    0 = Kurbel steht)
+///  * [onRevolution]: bei jeder vollen Umdrehung
 class TheCrank extends StatefulWidget {
-  final GlobalKey<DonationButtonState> donationButtonKey;
-  TheCrank({Key? key,required this.donationButtonKey}) : super(key: key);
+  final double size;
+  final ValueChanged<double> onTempo;
+  final VoidCallback onRevolution;
+
+  /// Umdrehungen pro Sekunde, bei denen das Lied im Originaltempo läuft.
+  final double nominalRps;
+
+  const TheCrank({
+    super.key,
+    required this.size,
+    required this.onTempo,
+    required this.onRevolution,
+    this.nominalRps = 1.0,
+  });
+
   @override
-  _CrankState createState() => _CrankState();
+  State<TheCrank> createState() => _CrankState();
 }
 
-class _CrankState extends State<TheCrank> {
-  double fullAngle = 0.0;
-  double oldAngle = 0.0;
-  double angle = 0.0;
-  int oldTime = 0;
-  int time = 0;
-  int nullCounter = 0;
-  double speed = 1.0;
-  double scale = 1.0;
-  AudioPlayer player = AudioPlayer();
+class _CrankState extends State<TheCrank> with SingleTickerProviderStateMixin {
+  /// Aktueller Winkel des Griffs (0 = nach rechts, im Uhrzeigersinn positiv,
+  /// da die y-Achse nach unten zeigt).
+  double _angle = 0.0;
+  double _accumulated = 0.0; // für "volle Umdrehung"
+  Duration? _lastEventTime;
 
-  Widget build(BuildContext context) {
-    double scaleW = MediaQuery
-        .of(context)
-        .size
-        .width / (orgelSize.width / 0.7);
-    double scaleH = MediaQuery
-        .of(context)
-        .size
-        .height / (orgelSize.height/0.7);
-    if (scaleH > scaleW)
-      scale = scaleW;
-    else
-      scale = scaleH;
-    if (scale > 1)
-      scale = 1.0;
-    Offset sCP = crankOffset * scale;
-    Size cS = crankSize * scale;
-    Offset cSC = cS.center(Offset.zero);
-    Offset moveTo = Offset(sCP.dx - cSC.dx, sCP.dy - cSC.dy);
-    /*print("scale=$scale");
-    print("ParentSize=${MediaQuery.of(context).size}");
-    print("crankSize=$cS");
-    print("moveTo=$moveTo");*/
-    return Positioned(
-        left: moveTo.dx,
-        bottom: moveTo.dy,
-        child: GestureDetector(
-            onPanUpdate: _onPanUpdateHandler,
-            onPanEnd: _onPanEndHandler,
-            child: Transform(
-                transform: new Matrix4.rotationZ(angle - pi / 2),
-                alignment: FractionalOffset.center,
-                child: Container(
-                  /* decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                          )
-                        ),*/
-                    height: cS.height,
-                    width: cS.width,
-                    child: Image.asset(
-                      'assets/images/kurbel_margin.png',
-                      fit: BoxFit.fill,
-                    )
-                )
-            )
-        )
-    );
-  }
+  /// Geglättete Drehgeschwindigkeit in Umdrehungen/s.
+  double _rps = 0.0;
+  Duration _now = Duration.zero;
+  final Stopwatch _clock = Stopwatch()..start();
+  late final Ticker _ticker;
+  double _lastReportedTempo = -1;
 
-  double dp(double val, int places) {
-    if (val == double.infinity)
-        return double.infinity;
-    else if (val == double.nan)
-        return double.nan;
-    num mod = pow(10.0, places);
-    return ((val * mod).round().toDouble() / mod);
-  }
+  static const double _stopRps = 0.15;
 
+  @override
   void initState() {
     super.initState();
-    player.setAsset('assets/audios/We_wish_you.mp3',);
-    player.setLoopMode(LoopMode.one);
+    _ticker = createTicker(_onTick)..start();
   }
 
-  _onPanEndHandler(DragEndDetails dragEndDetails) {
-    player.stop();
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
   }
 
-  Future<void> setSpeedOnAngle(dAngle, angleTime) async {
-    double dSpeed = 0.0;
-    double dTime  = 0.0;
-    //"Normalize" the Angle
-    if (dAngle > pi) {
-      dAngle = (angle - 2 * pi) - oldAngle;
+  /// Läuft jeden Frame: lässt die Geschwindigkeit abklingen, wenn keine
+  /// Bewegung mehr kommt (Finger steht still oder losgelassen) – die Orgel
+  /// "leiert aus".
+  void _onTick(Duration _) {
+    final elapsed = _clock.elapsed;
+    final dt = (elapsed - _now).inMicroseconds / 1e6;
+    _now = elapsed;
+    final last = _lastEventTime;
+    final idle = last == null || (_now - last).inMilliseconds > 120;
+    if (idle && _rps > 0) {
+      _rps *= exp(-dt * 3.0); // Halbwertszeit ~0,23 s
+      if (_rps < _stopRps) _rps = 0;
     }
-    else if (dAngle < -pi) {
-      dAngle = angle - (oldAngle - 2 * pi);
+    _report();
+  }
+
+  void _report() {
+    final tempo = _rps < _stopRps ? 0.0 : _rps / widget.nominalRps;
+    if ((tempo - _lastReportedTempo).abs() > 0.02 ||
+        (tempo == 0) != (_lastReportedTempo == 0)) {
+      _lastReportedTempo = tempo;
+      widget.onTempo(tempo);
     }
-    dTime = angleTime - oldTime;
-    dSpeed = dp((dAngle / dTime)*270,3);
-    oldTime = angleTime;
-    print ("=========");
-    print("dAngle=$dAngle");
-    print("dSpeed=$dSpeed");
-    print("nullCounter=$nullCounter");
-    if (dSpeed!=double.infinity &&  dSpeed!=double.nan) {
-      if (!player.playing) {
-        await player.play();
-        speed = 1.0;
-        nullCounter = 0;
-      } else {
-        print("speed=$speed");
-        if (dSpeed > 0.1 && dSpeed < 0.75) {
-          nullCounter = 0;
-          speed = 0.5;
-        }
-        else if (dSpeed >= 0.75 && dSpeed < 1.25) {
-          nullCounter = 0;
-          speed = 1.0;
-        }
-        else if (dSpeed > 1.25) {
-          nullCounter = 0;
-          speed = 2.00;
-        }
-        else {
-          nullCounter++;
-          if (nullCounter > 10)
-            await player.pause();
-        }
-        if (player.playing) {
-          if (player.speed != speed)
-            Future.delayed(Duration(milliseconds: 750) );
-            await player.setSpeed(speed);
-        }
+  }
+
+  void _onPanUpdate(DragUpdateDetails d) {
+    final center = Offset(widget.size / 2, widget.size / 2);
+    final v = d.localPosition - center;
+    if (v.distance < widget.size * 0.05) return; // zu nah an der Achse
+    final newAngle = v.direction; // atan2, -pi..pi
+
+    var delta = newAngle - _angle;
+    if (delta > pi) delta -= 2 * pi;
+    if (delta < -pi) delta += 2 * pi;
+
+    final t = _clock.elapsed;
+    final last = _lastEventTime;
+    if (last != null) {
+      final dt = (t - last).inMicroseconds / 1e6;
+      if (dt > 0 && dt < 0.5) {
+        final inst = delta.abs() / (2 * pi) / dt;
+        // Tiefpass, damit das Tempo nicht flattert.
+        _rps = _rps + (inst - _rps) * min(1.0, dt * 8);
       }
     }
+    _lastEventTime = t;
 
+    _accumulated += delta;
+    if (_accumulated.abs() >= 2 * pi) {
+      _accumulated -= _accumulated.sign * 2 * pi;
+      widget.onRevolution();
+    }
+    setState(() => _angle = newAngle);
+    _report();
   }
 
-  void _onPanUpdateHandler(DragUpdateDetails details) {
-    final touchPositionFromCenter =
-        details.localPosition - (crankSize * scale).center(Offset.zero);
-    double dAngle = 0.0;
-    time = details.sourceTimeStamp!.inMilliseconds;
-    angle = pi + touchPositionFromCenter.direction;
-    dAngle = (angle - oldAngle);
-    setSpeedOnAngle(dAngle,time);
-    fullAngle += dAngle;
-    if ((fullAngle > 2 * pi) || (fullAngle < (-2 * pi))) {
-      fullAngle = 0;
-      this.widget.donationButtonKey.currentState?.newMoney();
+  /// Beim Anfassen springt der Griff unter den Finger, ohne dass das als
+  /// Drehung zählt.
+  void _onPanStart(DragStartDetails d) {
+    _lastEventTime = null;
+    final v = d.localPosition - Offset(widget.size / 2, widget.size / 2);
+    if (v.distance >= widget.size * 0.05) {
+      setState(() => _angle = v.direction);
     }
-    oldAngle=angle;
-    angle -= pi;
-    setState(() {});
   }
-  /*void _onPanUpdateHandler(DragUpdateDetails details) {
-    final touchPositionFromCenter =
-        details.localPosition - (crankSize * scale).center(Offset.zero);
-    double dSpeed = 0.0;
-    double dAngle = 0.0;
-    time = details.sourceTimeStamp!.inMilliseconds;
-    //    The angle of this offset as radians clockwise from the positive x-axis, in the range -pi to pi, assuming positive values of the x-axis go to the right and positive values of the y-axis go down. [...]
-    angle = pi + touchPositionFromCenter.direction;
-    dAngle = (angle - oldAngle);
-    if (dAngle > pi) {
-      dAngle = (angle - 2 * pi) - oldAngle;
-    }
-    else if (dAngle < -pi) {
-      dAngle = angle - (oldAngle - 2 * pi);
-    }
-    fullAngle += dAngle;
-    dSpeed = dp(((angle - oldAngle) / (time - oldTime)) * 3, 3) - 0.015;
-    if (dSpeed!=double.infinity &&  dSpeed!=double.nan) {
-      speed = speed + dSpeed;
-      //TODO: move player calls outside to enable await?
-      if (!player.playing) {
-        player.play();
-        speed = 1.0;
-        nullCounter = 0;
-      } else {
-        if (speed > 0.1 && speed < 0.75) {
-          nullCounter = 0;
-          if (player.speed!= 0.75)
-            player.setSpeed(0.75);
-        }
-        else if (speed >= 0.75 && speed < 1.25) {
-          nullCounter = 0;
-          if (player.speed!= 1.00)
-            player.setSpeed(1.00);
-        }
-        else if (speed > 1.25){
-          nullCounter = 0;
-          if (player.speed!= 1.25)
-            player.setSpeed(1.25);
-        }
-        else {
-          nullCounter++;
-          if (nullCounter > 10) player.pause();
-        }
-      }
-        print ("=========");
-        print("dAngle=$dAngle");
-        print("dSpeed=$dSpeed");
-        print("dSpeed=$dSpeed");
-        print("speed=$speed");
-        print("fullAngle=$fullAngle");
-        print("nullCounter=$nullCounter");
-      if ((fullAngle > 2 * pi) || (fullAngle < (-2 * pi))) {
-        fullAngle = 0;
-        this.widget.donationButtonKey.currentState?.newMoney();
-      }
-    }
-    oldAngle = angle;
-    oldTime = time;
-    angle -= pi;
-    //print("angle=$angle");
-    setState(() {});
-  }*/
+
+  void _onPanEnd(DragEndDetails d) {
+    _lastEventTime = null; // ab jetzt klingt das Tempo im Ticker ab
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onPanStart: _onPanStart,
+      onPanUpdate: _onPanUpdate,
+      onPanEnd: _onPanEnd,
+      child: Transform.rotate(
+        // Im Bild zeigt der Griff nach unten (= +pi/2).
+        angle: _angle - pi / 2,
+        child: Image.asset(
+          'assets/images/kurbel_margin.png',
+          width: widget.size,
+          height: widget.size,
+          fit: BoxFit.fill,
+        ),
+      ),
+    );
+  }
 }
