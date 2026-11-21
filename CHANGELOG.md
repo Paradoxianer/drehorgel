@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1.0 (in Arbeit)
+
+### Neu
+- Neue Notenrolle mit Liedern der Heilsarmee *(in Arbeit)*
+- Eigene Webseite: https://paradoxianer.github.io/drehorgel/ (mit Web-Version)
+
+### Geändert
+- Der Teilen-Text verlinkt auf die neue Webseite statt auf die alte Seite des Korps.
+- Der Spenden-Dialog zieht sich auf Tablets nicht mehr über die ganze Breite.
+- Info-Dialog: Florian Walz wird für Design und Grafik genannt (mit Link), der tote Link bei Daniel Matzeit ist entfernt.
+
 ## 2.0.0 (2026-11)
 
 ### Neu

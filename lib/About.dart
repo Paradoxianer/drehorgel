@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Muss zur Version in pubspec.yaml passen.
-const String appVersion = '2.0.0';
+const String appVersion = '2.1.0';
 
 class About {
   BuildContext context;
