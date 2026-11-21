@@ -56,7 +56,10 @@ class DonationButton extends StatelessWidget {
         icon: const Icon(Icons.volunteer_activism, color: Color(0xFFC0272D), size: 36),
         title: const Text('Jetzt wirklich spenden?',
             style: TextStyle(color: Color(0xFF4A2E14), fontFamily: 'serif', fontWeight: FontWeight.bold)),
-        content: SingleChildScrollView(
+        // Auf Tablets nicht über die ganze Breite ziehen.
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: SingleChildScrollView(
           child: Text(
             'Du hast ${_euro(donations.money)} erorgelt – dieses Geld ist nur gespielt.\n\n'
             'Wenn du möchtest, kannst du jetzt echt an die Heilsarmee spenden. '
@@ -66,6 +69,7 @@ class DonationButton extends StatelessWidget {
             'Vorgeschlagen sind ${_euro(_suggestedAmount)} – den Betrag kannst du '
             'auf der Spendenseite frei ändern.',
             style: const TextStyle(color: Color(0xFF4A2E14), fontSize: 15),
+          ),
           ),
         ),
         actions: [

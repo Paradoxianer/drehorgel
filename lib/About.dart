@@ -37,20 +37,14 @@ class About {
                     ),
                     TextSpan(text:"Drehorgelklang und Lied-Arrangements: eigene Synthese, gemeinfreie Melodien\n\n"),
                     TextSpan(text:"===== DANK geht an =====\n\n"),
-                    TextSpan(text:"Musik der ersten Version - Daniel Matzeit - "),
-                    TextSpan(text:"Website\n",
+                    TextSpan(text:"Design & Grafik - Florian Walz - "),
+                    TextSpan(text:"mfw-design.com\n",
                       style: TextStyle(color: Colors.blue),
                       recognizer: new TapGestureRecognizer()
-                        ..onTap = () { launchUrl(Uri.parse('https://profis.check24.de/profil/tastenheld/aqgrra'));
+                        ..onTap = () { launchUrl(Uri.parse('https://www.mfw-design.com/'));
                         },
                     ),
-                    TextSpan(text:"Florian Walz - "),
-                    TextSpan(text:"Website\n\n",
-                      style: TextStyle(color: Colors.blue),
-                      recognizer: new TapGestureRecognizer()
-                        ..onTap = () { launchUrl(Uri.parse('https://profis.check24.de/profil/tastenheld/aqgrra'));
-                        },
-                    )
+                    TextSpan(text:"Musik der ersten Version - Daniel Matzeit\n\n"),
                   ]
               )
           )
