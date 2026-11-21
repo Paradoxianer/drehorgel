@@ -10,7 +10,20 @@ import 'globals.dart';
 class FallingMoney extends StatefulWidget {
   final Donations donations;
 
-  const FallingMoney({super.key, required this.donations});
+  /// Wohin das Geld fällt (Bühnenkoordinaten). Standard: Öffnung des Topfes.
+  final Offset? target;
+
+  /// Waagerechter Bereich, in dem das Geld oben startet, und Start-Höhe.
+  final double startMinX, startMaxX, startY;
+
+  const FallingMoney({
+    super.key,
+    required this.donations,
+    this.target,
+    this.startMinX = 1250,
+    this.startMaxX = 1850,
+    this.startY = -120,
+  });
 
   @override
   State<FallingMoney> createState() => _FallingMoneyState();
@@ -54,7 +67,8 @@ class _FallingMoneyState extends State<FallingMoney>
     );
     final drop = _Drop(
       c,
-      Offset(1250 + _rng.nextDouble() * 600, -120),
+      Offset(widget.startMinX + _rng.nextDouble() * (widget.startMaxX - widget.startMinX),
+          widget.startY),
       (_rng.nextDouble() * 2 - 1) * 4 * pi,
       widget.donations.lastAmount,
     );
@@ -70,7 +84,7 @@ class _FallingMoneyState extends State<FallingMoney>
 
   @override
   Widget build(BuildContext context) {
-    final target = bucket.toStage(_bucketSlotInImage);
+    final target = widget.target ?? bucket.toStage(_bucketSlotInImage);
     return IgnorePointer(
       child: Stack(
         clipBehavior: Clip.none,

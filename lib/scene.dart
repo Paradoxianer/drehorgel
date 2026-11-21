@@ -65,7 +65,20 @@ class Scene extends StatelessWidget {
                 onRevolution: donations.newMoney,
               ),
             ),
-            if (!organOnly) Positioned.fill(child: FallingMoney(donations: donations)),
+            if (organOnly) _OrganMoneyPlate(donations: donations),
+            Positioned.fill(
+              key: ValueKey(organOnly), // Ziel ändert sich mit der Ausrichtung
+              child: organOnly
+                  // Hochformat: Münzen fallen in den Schlitz der Drehorgel
+                  ? FallingMoney(
+                      donations: donations,
+                      target: organ.toStage(organSlotInOrgan),
+                      startMinX: organOnlyView.left + 60,
+                      startMaxX: organOnlyView.right - 60,
+                      startY: organOnlyView.top - 60,
+                    )
+                  : FallingMoney(donations: donations),
+            ),
           ],
     );
   }
@@ -75,6 +88,52 @@ class Scene extends StatelessWidget {
     return Positioned.fromRect(
       rect: r,
       child: Image.asset(s.asset, fit: BoxFit.fill),
+    );
+  }
+}
+
+/// Hochformat: Papierschild vorn an der Drehorgel mit dem erorgelten Betrag
+/// (die Tafel am Spendentopf ist dort nicht zu sehen).
+class _OrganMoneyPlate extends StatelessWidget {
+  final Donations donations;
+  const _OrganMoneyPlate({required this.donations});
+
+  @override
+  Widget build(BuildContext context) {
+    final center = organ.toStage(organPlateCenterInOrgan);
+    const w = 250.0, h = 112.0;
+    return Positioned(
+      left: center.dx - w / 2,
+      top: center.dy - h / 2,
+      width: w,
+      height: h,
+      child: IgnorePointer(
+        child: Transform.rotate(
+          angle: -0.03, // leicht schief angenagelt
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4E6C4),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: const Color(0xFF4A2E14), width: 3),
+              boxShadow: const [BoxShadow(color: Color(0x66000000), blurRadius: 8, offset: Offset(2, 4))],
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: ListenableBuilder(
+              listenable: donations,
+              builder: (context, _) => FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  const Text('Erorgelt',
+                      style: TextStyle(fontSize: 26, color: Color(0xFF7A1A1A), fontFamily: 'serif')),
+                  Text(donations.formatted,
+                      style: const TextStyle(
+                          fontSize: 48, fontWeight: FontWeight.bold, color: Color(0xFFC0272D))),
+                ]),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

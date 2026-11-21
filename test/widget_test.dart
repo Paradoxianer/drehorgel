@@ -5,6 +5,7 @@ import 'package:flutter_midi_pro/flutter_midi_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orgel/donation_button.dart';
+import 'package:orgel/scene.dart';
 import 'package:orgel/About.dart';
 import 'package:orgel/donations.dart';
 import 'package:orgel/globals.dart';
@@ -78,5 +79,16 @@ void main() {
     await tester.tap(find.text('Abbrechen'));
     await tester.pumpAndSettle();
     expect(find.text('Jetzt wirklich spenden?'), findsNothing);
+  });
+
+  testWidgets('Hochformat zeigt den erorgelten Betrag am Orgelschild', (tester) async {
+    final d = Donations()..money = 2.23;
+    Future<void> pump(bool organOnly) => tester.pumpWidget(MaterialApp(
+          home: Scene(donations: d, onTempo: (_) {}, organOnly: organOnly),
+        ));
+    await pump(true);
+    expect(find.text('2,23 €'), findsOneWidget); // Schild an der Orgel
+    await pump(false);
+    expect(find.text('2,23 €'), findsOneWidget); // Tafel am Spendentopf
   });
 }

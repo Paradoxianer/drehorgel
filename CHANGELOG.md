@@ -14,7 +14,8 @@
   *Standortrolle* (Amazing Grace, When the Saints Go Marching In, Ode an die
   Freude, Michael, Row the Boat Ashore) – mit mehreren Strophen, einzelne
   Lieder anwählbar.
-- **Fallendes Geld:** Pro Umdrehung fällt eine Münze in den Spendentopf.
+- **Fallendes Geld:** Pro Umdrehung fällt eine Münze in den Spendentopf –
+  im Hochformat in den Schlitz der Drehorgel, mit Betragsschild an der Orgel.
 
 ### Geändert
 - Neuer, eigener Drehorgelklang (SoundFont, zwei schwebende Register,

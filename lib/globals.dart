@@ -48,3 +48,8 @@ const double crankImageSize = 450;
 /// Drehachse der Kurbel im Orgelbild (Bildpixel), aus der Designvorlage
 /// `data/Drehorgel komplett.png` übernommen.
 const Offset crankPivotInOrgan = Offset(320, 39);
+
+/// Hochformat: Mitte des Betragsschilds auf der Orgelfront und der Schlitz
+/// (dunkle Öffnung unten), in den die Münzen fallen – beides Orgelbild-Pixel.
+const Offset organPlateCenterInOrgan = Offset(225, 300);
+const Offset organSlotInOrgan = Offset(225, 395);
