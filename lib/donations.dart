@@ -12,26 +12,33 @@ class Donations extends ChangeNotifier {
   double lastAmount = 0.0;
 
   void newMoney() {
-    // Wahrscheinlichkeiten wie in der bisherigen Version.
-    double add;
-    if (_rng.nextDouble() < 1e-9) {
-      add = 100;
-    } else if (_rng.nextDouble() < 1e-8) {
-      add = 50;
-    } else if (_rng.nextDouble() < 2e-6) {
-      add = 20;
-    } else if (_rng.nextDouble() < 2e-5) {
-      add = 10;
-    } else if (_rng.nextDouble() < 1e-4) {
-      add = 5;
-    } else if (_rng.nextBool()) {
-      add = 1;
-    } else {
-      add = _rng.nextInt(100) / 100.0;
-    }
+    // Wie am echten Stand: meist kleine Münzen, selten ein Euro, Scheine
+    // fast nie. Im Schnitt ca. 8 Cent pro Kurbelumdrehung.
+    double add = _pickCoin();
     lastAmount = add;
     money = ((money + add) * 100).roundToDouble() / 100;
     notifyListeners();
+  }
+
+  /// (Betrag, Gewicht) – Gewichte summieren sich zu 1000.
+  static const List<(double, int)> _coins = [
+    (0.01, 300), (0.02, 250), (0.05, 200), (0.10, 130),
+    (0.20, 70), (0.50, 35), (1.00, 12), (2.00, 3),
+  ];
+
+  double _pickCoin() {
+    // Ganz seltene Scheine
+    final r = _rng.nextDouble();
+    if (r < 1e-5) return 50;
+    if (r < 1e-4) return 20;
+    if (r < 5e-4) return 10;
+    if (r < 1.5e-3) return 5;
+    var roll = _rng.nextInt(1000);
+    for (final (amount, weight) in _coins) {
+      if (roll < weight) return amount;
+      roll -= weight;
+    }
+    return 0.01;
   }
 
   String get formatted => '${money.toStringAsFixed(2).replaceAll('.', ',')} €';

@@ -8,8 +8,21 @@ class DonationButton extends StatelessWidget {
   final String whichCorps;
   final String whichPurpose;
 
+  /// Spendenseite des Korps Chemnitz-Kaßberg mit eingebettetem
+  /// Twingle-Formular. Twingle übernimmt Query-Parameter mit Präfix `tw_`:
+  ///  * `tw_amount`        – Betrag in Euro mit Dezimalpunkt; wird nur
+  ///    übernommen, wenn er im Formular-Bereich liegt (aktuell 5–10000 €)
+  ///  * `tw_target_id_fix` – Spendenzweck über die `internal_id` (= Korps-
+  ///    Nummer, Chemnitz-Kaßberg = 273) und nur diesen zur Auswahl anbieten.
+  ///    Ohne den Parameter steht der Zweck auf "Berlin-Prenzlauer Berg"!
+  ///  * `tw_cid`           – Kampagnen-Kennung (unsichtbar, zur Auswertung)
+  /// (Früher Altruja mit `#custom1=…&custom2=…&betrag=…` – funktioniert nicht
+  /// mehr.)
   static const String _url =
-      'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html#';
+      'https://www.heilsarmee.de/chemnitzkassberg/spenden-ssl.html';
+
+  /// Mindestbetrag des Twingle-Formulars; kleinere Beträge würden ignoriert.
+  static const double _minAmount = 5.0;
 
   const DonationButton({
     super.key,
@@ -20,14 +33,14 @@ class DonationButton extends StatelessWidget {
 
   Future<void> _launchURL(BuildContext context) async {
     final money = donations.money;
-    var donateUrl = '${_url}custom1=$whichCorps&custom2=$whichPurpose&betrag=';
-    if (money > 0.25) {
-      if (money > 200) await _showMyDialog(context);
-      donateUrl += money.toStringAsFixed(2).replaceAll('.', ',');
-    } else {
-      donateUrl += '5,00';
-    }
-    if (!await launchUrl(Uri.parse(donateUrl))) {
+    if (money > 200) await _showMyDialog(context);
+    final amount = money < _minAmount ? _minAmount : money;
+    final donateUrl = Uri.parse(_url).replace(queryParameters: {
+      'tw_amount': amount.toStringAsFixed(2),
+      'tw_target_id_fix': whichCorps,
+      'tw_cid': whichPurpose,
+    });
+    if (!await launchUrl(donateUrl)) {
       throw 'Could not launch $donateUrl';
     }
   }

@@ -11,6 +11,8 @@ import 'donation_button.dart';
 import 'donations.dart';
 import 'organ_player.dart';
 import 'scene.dart';
+import 'roll_ui.dart';
+import 'songs.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,8 +22,7 @@ void main() {
   final purpose = Uri.base.queryParameters['custom2'] ?? 'Drehorgelspende';
 
   if (!kIsWeb) {
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    // Querformat: ganze Szene, Hochformat: nur die Drehorgel.
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
   runApp(MyApp(corps: corps, purpose: purpose));
@@ -55,18 +56,39 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey _previewContainer = GlobalKey();
   final Donations _donations = Donations();
-  final OrganPlayer _player = AudioOrganPlayer('assets/audios/We_wish_you.mp3');
-  late final Future<void> _playerReady = _player.init();
+  final OrganPlayer _player = OrganPlayer.forPlatform();
+  OrganRoll _roll = rolls.first;
+  /// Zuletzt im Menü gewählte Stelle -> sofortige Anzeige im Notenband.
+  final ValueNotifier<RollEntry?> _jump = ValueNotifier(null);
+  /// Was das Notenband gerade anzeigt.
+  final ValueNotifier<RollEntry?> _shown = ValueNotifier(null);
+  late Future<void> _playerReady = _player.init(_roll);
 
   @override
   void dispose() {
     _player.dispose();
     _donations.dispose();
+    _jump.dispose();
+    _shown.dispose();
     super.dispose();
   }
 
   void _onTempo(double tempo) {
     _playerReady.then((_) => _player.setTempo(tempo));
+  }
+
+  Future<void> _chooseRoll() async {
+    final choice = await showRollChooser(context, _roll, _shown.value?.title);
+    if (choice == null) return;
+    final rollChanged = choice.roll.id != _roll.id;
+    // Sofort zeigen, was gewählt wurde – nicht erst, wenn der Player nachzieht.
+    _jump.value = choice.start ?? (await RollIndex.load(choice.roll)).entries.first;
+    if (rollChanged) setState(() => _roll = choice.roll);
+    _playerReady = _playerReady.then((_) async {
+      if (rollChanged) await _player.selectRoll(choice.roll);
+      final start = choice.start;
+      if (start != null) await _player.seekTo(start);
+    });
   }
 
   @override
@@ -82,12 +104,30 @@ class _MyHomePageState extends State<MyHomePage> {
               fit: BoxFit.cover,
               alignment: Alignment.bottomCenter,
             ),
-            Scene(donations: _donations, onTempo: _onTempo),
+            Scene(
+              donations: _donations,
+              onTempo: _onTempo,
+              organOnly: MediaQuery.orientationOf(context) == Orientation.portrait,
+            ),
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Stack(
                   children: [
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 56),
+                        child: NoteBand(
+                          key: ValueKey(_roll.id),
+                          player: _player,
+                          roll: _roll,
+                          jump: _jump,
+                          shown: _shown,
+                          onTap: _chooseRoll,
+                        ),
+                      ),
+                    ),
                     Align(
                       alignment: Alignment.topRight,
                       child: IconButton.filled(
@@ -117,7 +157,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            const _RotateHint(),
           ],
         ),
       ),
@@ -132,41 +171,16 @@ class _MyHomePageState extends State<MyHomePage> {
       final image = await boundary.toImage();
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData == null) return;
-      await Share.shareXFiles(
-        [
+      await SharePlus.instance.share(ShareParams(
+        files: [
           XFile.fromData(byteData.buffer.asUint8List(),
               name: 'drehorgel.png', mimeType: 'image/png')
         ],
         text: 'Ich habe für die Heilsarmee georgelt!\n'
             ' - probiers auch mal! https://www.heilsarmee.de/chemnitzkassberg/drehorgeln.html',
-      );
+      ));
     } catch (e) {
       debugPrint('error: $e');
     }
-  }
-}
-
-/// Im Hochformat (z.B. Browser auf dem Handy) Hinweis zum Drehen anzeigen.
-class _RotateHint extends StatelessWidget {
-  const _RotateHint();
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    if (size.width >= size.height) return const SizedBox.shrink();
-    return const Align(
-      alignment: Alignment(0, -0.6),
-      child: Card(
-        color: Color(0xE6FFFFFF),
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.screen_rotation, size: 32),
-            SizedBox(width: 12),
-            Text('Bitte das Gerät quer halten', style: TextStyle(fontSize: 18)),
-          ]),
-        ),
-      ),
-    );
   }
 }

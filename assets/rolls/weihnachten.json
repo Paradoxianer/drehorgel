@@ -1,0 +1,100 @@
+{
+ "id": "weihnachten",
+ "title": "Weihnachtsrolle",
+ "ppq": 480,
+ "totalTicks": 305280,
+ "durationSec": 329.686,
+ "entries": [
+  {
+   "title": "Stille Nacht",
+   "verse": 1,
+   "verses": 3,
+   "tick": 0,
+   "sec": 0.0
+  },
+  {
+   "title": "Stille Nacht",
+   "verse": 2,
+   "verses": 3,
+   "tick": 34560,
+   "sec": 45.0
+  },
+  {
+   "title": "Stille Nacht",
+   "verse": 3,
+   "verses": 3,
+   "tick": 69120,
+   "sec": 90.0
+  },
+  {
+   "title": "We Wish You a Merry Christmas",
+   "verse": 1,
+   "verses": 3,
+   "tick": 104640,
+   "sec": 136.25
+  },
+  {
+   "title": "We Wish You a Merry Christmas",
+   "verse": 2,
+   "verses": 3,
+   "tick": 116640,
+   "sec": 146.25
+  },
+  {
+   "title": "We Wish You a Merry Christmas",
+   "verse": 3,
+   "verses": 3,
+   "tick": 128640,
+   "sec": 156.25
+  },
+  {
+   "title": "O Tannenbaum",
+   "verse": 1,
+   "verses": 3,
+   "tick": 141600,
+   "sec": 167.05
+  },
+  {
+   "title": "O Tannenbaum",
+   "verse": 2,
+   "verses": 3,
+   "tick": 159360,
+   "sec": 187.232
+  },
+  {
+   "title": "O Tannenbaum",
+   "verse": 3,
+   "verses": 3,
+   "tick": 177120,
+   "sec": 207.414
+  },
+  {
+   "title": "Jingle Bells",
+   "verse": 1,
+   "verses": 2,
+   "tick": 195840,
+   "sec": 228.686
+  },
+  {
+   "title": "Jingle Bells",
+   "verse": 2,
+   "verses": 2,
+   "tick": 226560,
+   "sec": 254.286
+  },
+  {
+   "title": "Morgen kommt der Weihnachtsmann",
+   "verse": 1,
+   "verses": 2,
+   "tick": 258240,
+   "sec": 280.686
+  },
+  {
+   "title": "Morgen kommt der Weihnachtsmann",
+   "verse": 2,
+   "verses": 2,
+   "tick": 281280,
+   "sec": 304.686
+  }
+ ]
+}

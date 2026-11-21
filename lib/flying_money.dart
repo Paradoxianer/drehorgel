@@ -104,7 +104,7 @@ class _FallingMoneyState extends State<FallingMoney>
   }
 }
 
-/// Schein ab 5 €, goldene Münze für 1–2 €, Kupfermünze für Cent-Beträge.
+/// Schein ab 5 €, goldene Münze ab 10 Cent, Kupfermünze für 1–5 Cent.
 class _MoneyPiece extends StatelessWidget {
   final double amount;
   const _MoneyPiece({required this.amount});
@@ -114,9 +114,9 @@ class _MoneyPiece extends StatelessWidget {
     if (amount >= 5) {
       return Image.asset('assets/images/Money.png', fit: BoxFit.contain);
     }
-    final gold = amount >= 1;
-    final label = gold ? '${amount.toInt()}€' : '${(amount * 100).round()}';
-    final size = gold ? 70.0 : 54.0;
+    final gold = amount >= 0.1;
+    final label = amount >= 1 ? '${amount.toInt()}€' : '${(amount * 100).round()}';
+    final size = amount >= 1 ? 70.0 : (gold ? 60.0 : 50.0);
     return Center(
       child: Container(
         width: size,

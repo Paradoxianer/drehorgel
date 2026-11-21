@@ -5,32 +5,56 @@ import 'flying_money.dart';
 import 'globals.dart';
 import 'the_crank.dart';
 
+/// Ausschnitt im Hochformat: nur die Drehorgel samt Kurbel-Schwenkbereich.
+const Rect organOnlyView = Rect.fromLTRB(40, 120, 740, 1080);
+
 /// Die komplette Bühne in festen Koordinaten (1920x1080), am Stück skaliert.
+/// Im Hochformat ([organOnly]) wird nur der Ausschnitt mit der Orgel gezeigt –
+/// gleiche Koordinaten, nur ein anderer "Kamera"-Ausschnitt.
 class Scene extends StatelessWidget {
   final Donations donations;
   final ValueChanged<double> onTempo;
+  final bool organOnly;
 
-  const Scene({super.key, required this.donations, required this.onTempo});
+  const Scene({super.key, required this.donations, required this.onTempo, this.organOnly = false});
 
   @override
   Widget build(BuildContext context) {
     final pivot = organ.toStage(crankPivotInOrgan);
     final crankSize = crankImageSize * organ.scale;
+    final view = organOnly ? organOnlyView : Offset.zero & stageSize;
 
     return FittedBox(
       fit: BoxFit.contain,
       alignment: Alignment.bottomCenter,
       child: SizedBox.fromSize(
-        size: stageSize,
-        child: Stack(
+        size: view.size,
+        child: Stack(clipBehavior: Clip.none, children: [
+          Positioned(
+            left: -view.left,
+            top: -view.top,
+            width: stageSize.width,
+            height: stageSize.height,
+            child: _stage(pivot, crankSize),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget _stage(Offset pivot, double crankSize) {
+    return Stack(
           clipBehavior: Clip.none,
           children: [
-            _sprite(maleSalutist),
-            _sprite(femaleSalutist),
-            _sprite(bucket),
-            _BucketBoard(donations: donations),
+            if (!organOnly) ...[
+              _sprite(maleSalutist),
+              _sprite(femaleSalutist),
+              _sprite(bucket),
+              _BucketBoard(donations: donations),
+            ],
             _sprite(organ),
             Positioned(
+              key: const ValueKey('crank'), // Zustand beim Drehen des Geräts behalten
               left: pivot.dx - crankSize / 2,
               top: pivot.dy - crankSize / 2,
               width: crankSize,
@@ -41,10 +65,8 @@ class Scene extends StatelessWidget {
                 onRevolution: donations.newMoney,
               ),
             ),
-            Positioned.fill(child: FallingMoney(donations: donations)),
+            if (!organOnly) Positioned.fill(child: FallingMoney(donations: donations)),
           ],
-        ),
-      ),
     );
   }
 
