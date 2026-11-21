@@ -31,60 +31,71 @@ class DonationButton extends StatelessWidget {
     this.whichPurpose = 'Drehorgelspende',
   });
 
-  Future<void> _launchURL(BuildContext context) async {
-    final money = donations.money;
-    if (money > 200) await _showMyDialog(context);
-    final amount = money < _minAmount ? _minAmount : money;
-    final donateUrl = Uri.parse(_url).replace(queryParameters: {
-      'tw_amount': amount.toStringAsFixed(2),
-      'tw_target_id_fix': whichCorps,
-      'tw_cid': whichPurpose,
-    });
-    if (!await launchUrl(donateUrl)) {
-      throw 'Could not launch $donateUrl';
+  /// Vorgeschlagener Betrag für die echte Spende (mindestens [_minAmount]).
+  double get _suggestedAmount => donations.money < _minAmount ? _minAmount : donations.money;
+
+  Uri get _donateUrl => Uri.parse(_url).replace(queryParameters: {
+        'tw_amount': _suggestedAmount.toStringAsFixed(2),
+        'tw_target_id_fix': whichCorps,
+        'tw_cid': whichPurpose,
+      });
+
+  static String _euro(double v) => '${v.toStringAsFixed(2).replaceAll('.', ',')} €';
+
+  /// Erst erklären, dann (freiwillig) zur externen Spendenseite – die App
+  /// selbst wickelt keine Zahlung ab, und eine Spende schaltet nichts frei.
+  Future<void> _confirmAndOpen(BuildContext context) async {
+    final go = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFFF4E6C4),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: const BorderSide(color: Color(0xFF6B4423), width: 3),
+        ),
+        icon: const Icon(Icons.volunteer_activism, color: Color(0xFFC0272D), size: 36),
+        title: const Text('Jetzt wirklich spenden?',
+            style: TextStyle(color: Color(0xFF4A2E14), fontFamily: 'serif', fontWeight: FontWeight.bold)),
+        content: SingleChildScrollView(
+          child: Text(
+            'Du hast ${_euro(donations.money)} erorgelt – dieses Geld ist nur gespielt.\n\n'
+            'Wenn du möchtest, kannst du jetzt echt an die Heilsarmee spenden. '
+            'Die Spende geht direkt an das Korps Chemnitz-Kaßberg '
+            '(Die Heilsarmee in Deutschland, KdöR), wird über deren Webseite '
+            'abgewickelt und ist steuerlich absetzbar.\n\n'
+            'Vorgeschlagen sind ${_euro(_suggestedAmount)} – den Betrag kannst du '
+            'auf der Spendenseite frei ändern.',
+            style: const TextStyle(color: Color(0xFF4A2E14), fontSize: 15),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Abbrechen', style: TextStyle(color: Color(0xFF6B4423))),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC0272D)),
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.open_in_new, size: 18),
+            label: const Text('Zur Spendenseite'),
+          ),
+        ],
+      ),
+    );
+    if (go != true) return;
+    if (!await launchUrl(_donateUrl, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $_donateUrl';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: donations,
-      builder: (context, _) => FloatingActionButton.extended(
-        heroTag: 'donate',
-        tooltip: 'Erorgelten Betrag spenden',
-        onPressed: () => _launchURL(context),
-        icon: const Icon(Icons.volunteer_activism),
-        label: Text('Spenden: ${donations.formatted}'),
-      ),
-    );
-  }
-
-  Future<void> _showMyDialog(BuildContext context) {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) => AlertDialog(
-        backgroundColor: Colors.red,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(32.0))),
-        title: const Text('Große Spende'),
-        content: const SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text('Danke dass du spenden möchtest'),
-              Text(
-                  'Bitte beachte, der erorgelte Betrag wird automatisch in das Spendenformular übernommen.'),
-              Text('Du kannst den Betrag auf unserer Website noch ändern.'),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('OK', style: TextStyle(color: Colors.white)),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+    return FloatingActionButton.extended(
+      heroTag: 'donate',
+      tooltip: 'Echt an die Heilsarmee spenden (öffnet deren Webseite)',
+      onPressed: () => _confirmAndOpen(context),
+      icon: const Icon(Icons.favorite),
+      label: const Text('Echt spenden'),
     );
   }
 }

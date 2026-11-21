@@ -23,6 +23,10 @@
 - Spendenformular: Betrag wird vorbelegt und der Spendenzweck fest auf das
   Korps Chemnitz-Kaßberg gesetzt (die Spendenseite nutzt jetzt Twingle).
   Mindestbetrag 5 €.
+- Spenden-Button heißt jetzt „Echt spenden“ und erklärt vorher, dass das
+  erorgelte Geld nur gespielt ist und die Spende extern über die Webseite der
+  Heilsarmee abgewickelt wird.
+- Unnötige Berechtigung „Alle Pakete abfragen“ entfernt.
 
 ### Behoben
 - Die Kurbel saß je nach Gerät neben der Drehorgel.

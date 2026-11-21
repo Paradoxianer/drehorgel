@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_midi_pro/flutter_midi_pro.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:orgel/donation_button.dart';
 import 'package:orgel/About.dart';
 import 'package:orgel/donations.dart';
 import 'package:orgel/globals.dart';
@@ -60,5 +62,21 @@ void main() {
     final pubspec = File('pubspec.yaml').readAsStringSync();
     final version = RegExp(r'^version: ([0-9.]+)\+', multiLine: true).firstMatch(pubspec)!.group(1);
     expect(appVersion, version);
+  });
+
+  testWidgets('Spenden-Button erklärt vor dem Verlassen der App', (tester) async {
+    final d = Donations()..money = 0.42;
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(body: Center(child: DonationButton(donations: d))),
+    ));
+    expect(find.text('Echt spenden'), findsOneWidget);
+    await tester.tap(find.text('Echt spenden'));
+    await tester.pumpAndSettle();
+    expect(find.text('Jetzt wirklich spenden?'), findsOneWidget);
+    expect(find.textContaining('nur gespielt'), findsOneWidget);
+    expect(find.textContaining('5,00 €'), findsOneWidget); // Mindestbetrag vorgeschlagen
+    await tester.tap(find.text('Abbrechen'));
+    await tester.pumpAndSettle();
+    expect(find.text('Jetzt wirklich spenden?'), findsNothing);
   });
 }
