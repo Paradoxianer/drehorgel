@@ -39,5 +39,4 @@ flutter build web --release --base-href /files/orgel-app/ \
 - Korps per URL wählen: `…/orgel-app/?custom1=<Korps-Nr>&custom2=<Zweck>#/`
   (Query-String vor dem `#`). Bitte nach dem Upload testen.
 
-Hinweis: Diese Änderungen wurden ohne Flutter-SDK erstellt und noch nicht
-gebaut/getestet – bitte zuerst den Workflow laufen lassen.
+Getestet mit Flutter 3.50.1: `flutter test` grün, Web-Build ok, im Browser unter /files/orgel-app/ nur Requests an den eigenen Host.
