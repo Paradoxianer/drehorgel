@@ -1,0 +1,34 @@
+name: Web-Build für heilsarmee.de
+
+# Baut die Web-Version ohne Fremdserver (kein Google-CDN) und ohne
+# Service Worker für https://www.heilsarmee.de/files/orgel-app/
+# Das Ergebnis (Artifact "orgel-app") wird in /files/orgel-app/ hochgeladen.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.1
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter test
+      - run: >
+          flutter build web --release
+          --base-href /files/orgel-app/
+          --no-web-resources-cdn
+          --pwa-strategy=none
+      - name: Prüfen, dass keine Fremdserver eingebunden sind
+        run: |
+          if grep -rEl "gstatic\.com|googleapis\.com|fonts\.google" build/web --include='*.js' --include='*.html' --include='*.json'; then
+            echo "::error::Fremdserver-Verweise im Build gefunden"; exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: orgel-app
+          path: build/web

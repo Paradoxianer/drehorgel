@@ -177,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
               name: 'drehorgel.png', mimeType: 'image/png')
         ],
         text: 'Ich habe für die Heilsarmee georgelt!\n'
-            ' - probiers auch mal! https://paradoxianer.github.io/drehorgel/',
+            ' - probiers auch mal! ${kIsWeb ? 'https://www.heilsarmee.de/files/orgel-app/' : 'https://paradoxianer.github.io/drehorgel/'}',
       ));
     } catch (e) {
       debugPrint('error: $e');
