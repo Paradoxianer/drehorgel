@@ -34,8 +34,9 @@ flutter build web --release --base-href /files/orgel-app/ \
 - Datenschutzbeauftragte/r der Heilsarmee soll die Web-Version freigeben und
   die Datenschutzerklärung ggf. um einen Absatz „Drehorgel-Web-App“ ergänzen.
 - Der Server muss `.js`, `.wasm`, `.json`, `.mp3` mit korrekten MIME-Typen liefern.
-- Nutzungsrechte an Grafiken (Florian Walz) und Musik (Daniel Matzeit) für das
-  Hosting bei der Heilsarmee.
+- Grafiken (Florian Walz) sind eine Auftragsarbeit für diese App; die Musik ist
+  eigene Synthese mit gemeinfreien Melodien. Kein weiterer Klärungsbedarf, sofern
+  die Nutzungsrechte an den Grafiken im Auftrag geregelt sind.
 - Korps per URL wählen: `…/orgel-app/?custom1=<Korps-Nr>&custom2=<Zweck>#/`
   (Query-String vor dem `#`). Bitte nach dem Upload testen.
 

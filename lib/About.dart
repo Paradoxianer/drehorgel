@@ -65,7 +65,6 @@ class About {
                         ..onTap = () { launchUrl(Uri.parse('https://www.mfw-design.com/'));
                         },
                     ),
-                    TextSpan(text:"Musik der ersten Version - Daniel Matzeit\n\n"),
                   ]
               )
           )
